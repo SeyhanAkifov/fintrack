@@ -17,16 +17,16 @@ export function Button({
   return (
     <button
       className={cn(
-        "inline-flex items-center justify-center rounded-lg font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed",
+        "inline-flex items-center justify-center rounded-xl font-medium transition-all focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed",
         {
           primary:
-            "bg-indigo-600 text-white hover:bg-indigo-700 focus:ring-indigo-500",
+            "bg-gradient-to-r from-indigo-500 to-violet-600 text-white hover:from-indigo-600 hover:to-violet-700 shadow-sm shadow-indigo-200 focus:ring-indigo-500",
           secondary:
-            "bg-white text-gray-700 border border-gray-300 hover:bg-gray-50 focus:ring-indigo-500",
+            "bg-white text-gray-700 border border-gray-200 hover:bg-gray-50 shadow-sm focus:ring-indigo-400",
           danger:
-            "bg-red-600 text-white hover:bg-red-700 focus:ring-red-500",
+            "bg-gradient-to-r from-rose-500 to-pink-600 text-white hover:from-rose-600 hover:to-pink-700 shadow-sm shadow-rose-200 focus:ring-rose-500",
           ghost:
-            "text-gray-600 hover:bg-gray-100 focus:ring-gray-400",
+            "text-gray-500 hover:bg-gray-100 focus:ring-gray-300",
         }[variant],
         {
           sm: "text-xs px-2.5 py-1.5 gap-1",

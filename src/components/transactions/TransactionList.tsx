@@ -16,17 +16,15 @@ interface TransactionListProps {
 
 export function TransactionList({ initialTransactions }: TransactionListProps) {
   const [filters, setFilters] = useState<FilterState>({});
-  const { transactions, setTransactions, isLoading, error, refetch } =
-    useTransactions(filters);
+  const { transactions, isLoading, error, refetch } = useTransactions(filters);
 
   const [formOpen, setFormOpen] = useState(false);
   const [editing, setEditing] = useState<Transaction | undefined>();
   const [deleteId, setDeleteId] = useState<number | null>(null);
 
-  const displayedTransactions =
-    isLoading && transactions.length === 0 ? initialTransactions : transactions;
+  const displayed = isLoading && transactions.length === 0 ? initialTransactions : transactions;
 
-  function handleFormSuccess(saved: Transaction) {
+  function handleFormSuccess() {
     setFormOpen(false);
     setEditing(undefined);
     refetch();
@@ -46,37 +44,48 @@ export function TransactionList({ initialTransactions }: TransactionListProps) {
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex items-center justify-between">
+      {/* Filter bar */}
+      <div className="flex flex-wrap items-center justify-between gap-3 bg-white/70 backdrop-blur rounded-2xl border border-white shadow-sm px-5 py-3.5">
         <TransactionFilters filters={filters} onFilterChange={setFilters} />
         <Button
           variant="primary"
           size="md"
           onClick={() => { setEditing(undefined); setFormOpen(true); }}
         >
-          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
           </svg>
           Add Transaction
         </Button>
       </div>
 
-      <div className="bg-white rounded-xl border border-gray-100 shadow-sm divide-y divide-gray-50">
-        {isLoading && displayedTransactions.length === 0 ? (
-          <p className="text-sm text-gray-400 text-center py-12">Loading…</p>
-        ) : displayedTransactions.length === 0 ? (
-          <p className="text-sm text-gray-400 text-center py-12">No transactions found.</p>
+      {/* List */}
+      <div className="bg-white/70 backdrop-blur rounded-2xl border border-white shadow-sm overflow-hidden">
+        {isLoading && displayed.length === 0 ? (
+          <div className="flex items-center justify-center py-16 text-sm text-gray-400">
+            Loading…
+          </div>
+        ) : displayed.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-16 gap-2">
+            <svg className="w-10 h-10 text-gray-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+            </svg>
+            <p className="text-sm text-gray-400">No transactions found.</p>
+          </div>
         ) : (
-          displayedTransactions.map((t) => (
-            <TransactionRow
-              key={t.id}
-              transaction={t}
-              onEdit={handleEdit}
-              onDelete={setDeleteId}
-            />
-          ))
+          <div className="divide-y divide-gray-50">
+            {displayed.map((t) => (
+              <TransactionRow
+                key={t.id}
+                transaction={t}
+                onEdit={handleEdit}
+                onDelete={setDeleteId}
+              />
+            ))}
+          </div>
         )}
         {error && (
-          <p className="text-sm text-red-500 text-center py-4">{error}</p>
+          <p className="text-sm text-rose-500 text-center py-4">{error}</p>
         )}
       </div>
 
