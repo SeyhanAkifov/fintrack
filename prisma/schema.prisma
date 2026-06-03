@@ -1,0 +1,23 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../generated"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+enum TransactionType {
+  income
+  expense
+}
+
+model Transaction {
+  id        Int             @id @default(autoincrement())
+  amount    Float
+  type      TransactionType
+  category  String
+  date      DateTime
+  note      String?
+  createdAt DateTime        @default(now())
+}
