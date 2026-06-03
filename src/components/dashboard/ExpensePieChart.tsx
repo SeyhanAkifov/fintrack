@@ -12,14 +12,14 @@ import { formatCurrency } from "@/lib/utils";
 import type { CategoryBreakdown } from "@/types";
 
 const COLORS = [
-  "#6366f1",
-  "#f59e0b",
-  "#10b981",
-  "#ef4444",
-  "#3b82f6",
-  "#8b5cf6",
-  "#ec4899",
-  "#14b8a6",
+  "#6366f1", // indigo
+  "#f43f5e", // rose
+  "#10b981", // emerald
+  "#f59e0b", // amber
+  "#3b82f6", // blue
+  "#8b5cf6", // violet
+  "#ec4899", // pink
+  "#14b8a6", // teal
 ];
 
 interface ExpensePieChartProps {
@@ -44,18 +44,30 @@ export function ExpensePieChart({ data }: ExpensePieChartProps) {
           nameKey="category"
           cx="50%"
           cy="50%"
+          innerRadius={60}
           outerRadius={100}
-          label={({ category, percentage }) =>
-            `${category} ${percentage.toFixed(1)}%`
-          }
-          labelLine={false}
+          paddingAngle={3}
         >
           {data.map((_, i) => (
-            <Cell key={i} fill={COLORS[i % COLORS.length]} />
+            <Cell key={i} fill={COLORS[i % COLORS.length]} stroke="white" strokeWidth={2} />
           ))}
         </Pie>
-        <Tooltip formatter={(v) => formatCurrency(v as number)} />
-        <Legend />
+        <Tooltip
+          formatter={(v) => [formatCurrency(v as number), ""]}
+          contentStyle={{
+            borderRadius: "12px",
+            border: "1px solid #f1f5f9",
+            boxShadow: "0 4px 16px rgba(0,0,0,0.08)",
+            fontSize: "13px",
+          }}
+        />
+        <Legend
+          iconType="circle"
+          iconSize={8}
+          formatter={(value) => (
+            <span style={{ fontSize: "12px", color: "#6b7280" }}>{value}</span>
+          )}
+        />
       </PieChart>
     </ResponsiveContainer>
   );

@@ -1,13 +1,15 @@
-import { getSummary, getChartData } from "@/lib/db";
+import { getSummary, getChartData, getMonthlyInsights } from "@/lib/db";
 import { SummaryCards } from "@/components/dashboard/SummaryCards";
 import { ExpensePieChart } from "@/components/dashboard/ExpensePieChart";
 import { BalanceLineChart } from "@/components/dashboard/BalanceLineChart";
+import { InsightsCard } from "@/components/dashboard/InsightsCard";
 import { Card } from "@/components/ui/Card";
 
 export default async function DashboardPage() {
-  const [summary, chartData] = await Promise.all([
+  const [summary, chartData, insights] = await Promise.all([
     getSummary(),
     getChartData(),
+    getMonthlyInsights(),
   ]);
 
   return (
@@ -18,6 +20,8 @@ export default async function DashboardPage() {
       </div>
 
       <SummaryCards {...summary} />
+
+      <InsightsCard insights={insights} />
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <Card title="Expenses by Category">

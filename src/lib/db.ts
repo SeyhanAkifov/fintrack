@@ -8,6 +8,8 @@ import type {
   BalancePoint,
   CreateTransactionInput,
   UpdateTransactionInput,
+  CategoryInsight,
+  MonthlyInsights,
 } from "@/types";
 
 export async function getTransactions(filters: FilterState = {}) {
@@ -119,4 +121,50 @@ export async function getChartData(): Promise<ChartData> {
   });
 
   return { pieData, lineData };
+}
+
+export async function getMonthlyInsights(): Promise<MonthlyInsights> {
+  const now = new Date();
+  const thisMonthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+  const lastMonthStart = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+  const lastMonthEnd = new Date(now.getFullYear(), now.getMonth(), 0, 23, 59, 59);
+
+  const [thisMonthData, lastMonthData] = await Promise.all([
+    prisma.transaction.groupBy({
+      by: ["category"],
+      where: { type: TransactionType.expense, date: { gte: thisMonthStart } },
+      _sum: { amount: true },
+    }),
+    prisma.transaction.groupBy({
+      by: ["category"],
+      where: { type: TransactionType.expense, date: { gte: lastMonthStart, lte: lastMonthEnd } },
+      _sum: { amount: true },
+    }),
+  ]);
+
+  const thisMap = new Map(thisMonthData.map((r) => [r.category, r._sum.amount ?? 0]));
+  const lastMap = new Map(lastMonthData.map((r) => [r.category, r._sum.amount ?? 0]));
+
+  const allCategories = new Set([...thisMap.keys(), ...lastMap.keys()]);
+
+  const comparisons: CategoryInsight[] = Array.from(allCategories)
+    .map((category) => {
+      const thisMonth = thisMap.get(category) ?? 0;
+      const lastMonth = lastMap.get(category) ?? 0;
+      const delta = thisMonth - lastMonth;
+      const deltaPercent = lastMonth > 0 ? (delta / lastMonth) * 100 : null;
+      const isOverpaid = delta > 0 && (deltaPercent === null || deltaPercent > 20) && delta > 10;
+
+      return { category, thisMonth, lastMonth, delta, deltaPercent, isOverpaid };
+    })
+    .sort((a, b) => b.delta - a.delta);
+
+  const monthName = (d: Date) =>
+    d.toLocaleString("en-GB", { month: "long", year: "numeric" });
+
+  return {
+    thisMonthLabel: monthName(now),
+    lastMonthLabel: monthName(lastMonthStart),
+    comparisons,
+  };
 }

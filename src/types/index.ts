@@ -50,3 +50,18 @@ export interface CreateTransactionInput {
 }
 
 export type UpdateTransactionInput = Partial<CreateTransactionInput>;
+
+export interface CategoryInsight {
+  category: string;
+  thisMonth: number;
+  lastMonth: number;
+  delta: number;
+  deltaPercent: number | null;
+  isOverpaid: boolean;
+}
+
+export interface MonthlyInsights {
+  thisMonthLabel: string;
+  lastMonthLabel: string;
+  comparisons: CategoryInsight[];
+}

@@ -9,112 +9,70 @@ const adapter = new PrismaBetterSqlite3({
 });
 const prisma = new PrismaClient({ adapter });
 
+const i = TransactionType.income;
+const e = TransactionType.expense;
+
 const transactions = [
-  {
-    amount: 3500.0,
-    type: TransactionType.income,
-    category: "Salary",
-    date: new Date("2026-05-01"),
-    note: "Monthly salary - May",
-  },
-  {
-    amount: 850.0,
-    type: TransactionType.expense,
-    category: "Rent",
-    date: new Date("2026-05-02"),
-    note: "May rent payment",
-  },
-  {
-    amount: 62.4,
-    type: TransactionType.expense,
-    category: "Food",
-    date: new Date("2026-05-03"),
-    note: "Weekly grocery run",
-  },
-  {
-    amount: 38.0,
-    type: TransactionType.expense,
-    category: "Transport",
-    date: new Date("2026-05-05"),
-    note: "Monthly transit pass",
-  },
-  {
-    amount: 24.9,
-    type: TransactionType.expense,
-    category: "Food",
-    date: new Date("2026-05-07"),
-    note: "Dinner at restaurant",
-  },
-  {
-    amount: 500.0,
-    type: TransactionType.income,
-    category: "Freelance",
-    date: new Date("2026-05-10"),
-    note: "Web design project payment",
-  },
-  {
-    amount: 14.99,
-    type: TransactionType.expense,
-    category: "Subscriptions",
-    date: new Date("2026-05-11"),
-    note: "Netflix monthly",
-  },
-  {
-    amount: 18.5,
-    type: TransactionType.expense,
-    category: "Transport",
-    date: new Date("2026-05-13"),
-    note: "Uber rides this week",
-  },
-  {
-    amount: 55.0,
-    type: TransactionType.expense,
-    category: "Food",
-    date: new Date("2026-05-15"),
-    note: "Grocery shopping",
-  },
-  {
-    amount: 120.0,
-    type: TransactionType.expense,
-    category: "Utilities",
-    date: new Date("2026-05-16"),
-    note: "Electricity and water bill",
-  },
-  {
-    amount: 200.0,
-    type: TransactionType.income,
-    category: "Freelance",
-    date: new Date("2026-05-18"),
-    note: "Logo design gig",
-  },
-  {
-    amount: 43.2,
-    type: TransactionType.expense,
-    category: "Food",
-    date: new Date("2026-05-20"),
-    note: "Lunch + coffee this week",
-  },
-  {
-    amount: 29.0,
-    type: TransactionType.expense,
-    category: "Transport",
-    date: new Date("2026-05-22"),
-    note: "Fuel top-up",
-  },
-  {
-    amount: 89.99,
-    type: TransactionType.expense,
-    category: "Health",
-    date: new Date("2026-05-25"),
-    note: "Gym membership",
-  },
-  {
-    amount: 3500.0,
-    type: TransactionType.income,
-    category: "Salary",
-    date: new Date("2026-06-01"),
-    note: "Monthly salary - June",
-  },
+  // ── APRIL 2026 ────────────────────────────────────────────────────────────
+  { amount: 3500.00, type: i, category: "Salary",        date: new Date("2026-04-01"), note: "Monthly salary - April" },
+  { amount: 850.00,  type: e, category: "Rent",          date: new Date("2026-04-02"), note: "April rent" },
+  { amount: 98.00,   type: e, category: "Utilities",     date: new Date("2026-04-03"), note: "Gas & electricity" },
+  { amount: 38.00,   type: e, category: "Transport",     date: new Date("2026-04-04"), note: "Monthly transit pass" },
+  { amount: 14.99,   type: e, category: "Subscriptions", date: new Date("2026-04-05"), note: "Netflix" },
+  { amount: 9.99,    type: e, category: "Subscriptions", date: new Date("2026-04-05"), note: "Spotify" },
+  { amount: 54.30,   type: e, category: "Food",          date: new Date("2026-04-06"), note: "Weekly groceries" },
+  { amount: 12.50,   type: e, category: "Food",          date: new Date("2026-04-08"), note: "Lunch at work" },
+  { amount: 22.00,   type: e, category: "Transport",     date: new Date("2026-04-10"), note: "Uber to airport" },
+  { amount: 300.00,  type: i, category: "Freelance",     date: new Date("2026-04-12"), note: "Landing page project" },
+  { amount: 48.90,   type: e, category: "Food",          date: new Date("2026-04-13"), note: "Weekly groceries" },
+  { amount: 35.00,   type: e, category: "Entertainment", date: new Date("2026-04-14"), note: "Cinema + drinks" },
+  { amount: 89.99,   type: e, category: "Health",        date: new Date("2026-04-15"), note: "Gym membership" },
+  { amount: 18.00,   type: e, category: "Food",          date: new Date("2026-04-16"), note: "Coffee & snacks" },
+  { amount: 51.20,   type: e, category: "Food",          date: new Date("2026-04-20"), note: "Weekly groceries" },
+  { amount: 15.00,   type: e, category: "Transport",     date: new Date("2026-04-21"), note: "Taxi home" },
+  { amount: 29.99,   type: e, category: "Subscriptions", date: new Date("2026-04-22"), note: "Adobe Creative Cloud" },
+  { amount: 62.00,   type: e, category: "Food",          date: new Date("2026-04-25"), note: "Dinner out with friends" },
+  { amount: 200.00,  type: i, category: "Freelance",     date: new Date("2026-04-28"), note: "Logo design" },
+  { amount: 44.00,   type: e, category: "Food",          date: new Date("2026-04-27"), note: "Weekly groceries" },
+
+  // ── MAY 2026 ──────────────────────────────────────────────────────────────
+  { amount: 3500.00, type: i, category: "Salary",        date: new Date("2026-05-01"), note: "Monthly salary - May" },
+  { amount: 850.00,  type: e, category: "Rent",          date: new Date("2026-05-02"), note: "May rent" },
+  { amount: 112.00,  type: e, category: "Utilities",     date: new Date("2026-05-03"), note: "Electricity, water & internet" },
+  { amount: 38.00,   type: e, category: "Transport",     date: new Date("2026-05-04"), note: "Monthly transit pass" },
+  { amount: 14.99,   type: e, category: "Subscriptions", date: new Date("2026-05-05"), note: "Netflix" },
+  { amount: 9.99,    type: e, category: "Subscriptions", date: new Date("2026-05-05"), note: "Spotify" },
+  { amount: 29.99,   type: e, category: "Subscriptions", date: new Date("2026-05-05"), note: "Adobe Creative Cloud" },
+  { amount: 62.40,   type: e, category: "Food",          date: new Date("2026-05-05"), note: "Weekly groceries" },
+  { amount: 24.90,   type: e, category: "Food",          date: new Date("2026-05-07"), note: "Dinner at restaurant" },
+  { amount: 500.00,  type: i, category: "Freelance",     date: new Date("2026-05-10"), note: "Web design project" },
+  { amount: 18.50,   type: e, category: "Transport",     date: new Date("2026-05-12"), note: "Uber rides" },
+  { amount: 55.00,   type: e, category: "Food",          date: new Date("2026-05-13"), note: "Weekly groceries" },
+  { amount: 45.00,   type: e, category: "Entertainment", date: new Date("2026-05-14"), note: "Concert tickets" },
+  { amount: 89.99,   type: e, category: "Health",        date: new Date("2026-05-15"), note: "Gym membership" },
+  { amount: 43.20,   type: e, category: "Food",          date: new Date("2026-05-18"), note: "Lunch + coffee" },
+  { amount: 200.00,  type: i, category: "Freelance",     date: new Date("2026-05-20"), note: "Logo design gig" },
+  { amount: 29.00,   type: e, category: "Transport",     date: new Date("2026-05-21"), note: "Fuel top-up" },
+  { amount: 58.80,   type: e, category: "Food",          date: new Date("2026-05-24"), note: "Weekly groceries" },
+  { amount: 149.00,  type: e, category: "Health",        date: new Date("2026-05-26"), note: "Dentist appointment" },
+  { amount: 32.00,   type: e, category: "Food",          date: new Date("2026-05-28"), note: "Brunch with colleague" },
+
+  // ── JUNE 2026 (current month) ─────────────────────────────────────────────
+  { amount: 3500.00, type: i, category: "Salary",        date: new Date("2026-06-01"), note: "Monthly salary - June" },
+  { amount: 850.00,  type: e, category: "Rent",          date: new Date("2026-06-02"), note: "June rent" },
+  { amount: 105.00,  type: e, category: "Utilities",     date: new Date("2026-06-02"), note: "Electricity & water" },
+  { amount: 38.00,   type: e, category: "Transport",     date: new Date("2026-06-03"), note: "Monthly transit pass" },
+  { amount: 14.99,   type: e, category: "Subscriptions", date: new Date("2026-06-03"), note: "Netflix" },
+  { amount: 9.99,    type: e, category: "Subscriptions", date: new Date("2026-06-03"), note: "Spotify" },
+  { amount: 29.99,   type: e, category: "Subscriptions", date: new Date("2026-06-03"), note: "Adobe Creative Cloud" },
+  { amount: 78.50,   type: e, category: "Food",          date: new Date("2026-06-04"), note: "Weekly groceries (price hike)" },
+  { amount: 42.00,   type: e, category: "Food",          date: new Date("2026-06-05"), note: "Dinner out" },
+  { amount: 750.00,  type: i, category: "Freelance",     date: new Date("2026-06-06"), note: "App redesign project" },
+  { amount: 55.00,   type: e, category: "Transport",     date: new Date("2026-06-07"), note: "Fuel + parking" },
+  { amount: 89.99,   type: e, category: "Health",        date: new Date("2026-06-08"), note: "Gym membership" },
+  { amount: 68.00,   type: e, category: "Food",          date: new Date("2026-06-09"), note: "Weekly groceries" },
+  { amount: 120.00,  type: e, category: "Entertainment", date: new Date("2026-06-10"), note: "Summer festival tickets" },
+  { amount: 38.50,   type: e, category: "Food",          date: new Date("2026-06-11"), note: "Lunch + coffee this week" },
 ];
 
 async function main() {
@@ -123,7 +81,7 @@ async function main() {
   for (const tx of transactions) {
     await prisma.transaction.create({ data: tx });
   }
-  console.log(`Seeded ${transactions.length} transactions.`);
+  console.log(`Seeded ${transactions.length} transactions across April–June 2026.`);
 }
 
 main()
