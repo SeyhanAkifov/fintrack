@@ -3,6 +3,7 @@ dotenv.config();
 
 import { PrismaClient, TransactionType } from "../generated/client";
 import { PrismaBetterSqlite3 } from "@prisma/adapter-better-sqlite3";
+import bcrypt from "bcryptjs";
 
 const adapter = new PrismaBetterSqlite3({
   url: process.env.DATABASE_URL ?? "file:./dev.db",
@@ -76,11 +77,21 @@ const transactions = [
 ];
 
 async function main() {
-  console.log("Seeding transactions...");
+  console.log("Seeding database…");
+
   await prisma.transaction.deleteMany();
+  await prisma.user.deleteMany();
+
+  const passwordHash = await bcrypt.hash("demo1234", 12);
+  const demoUser = await prisma.user.create({
+    data: { email: "demo@fintrack.app", passwordHash, name: "Demo User" },
+  });
+
   for (const tx of transactions) {
-    await prisma.transaction.create({ data: tx });
+    await prisma.transaction.create({ data: { ...tx, userId: demoUser.id } });
   }
+
+  console.log(`Created demo user: demo@fintrack.app / demo1234`);
   console.log(`Seeded ${transactions.length} transactions across April–June 2026.`);
 }
 

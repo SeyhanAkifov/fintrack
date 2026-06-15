@@ -1,3 +1,5 @@
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 import {
   getTransactionById,
   updateTransaction,
@@ -8,9 +10,13 @@ import type { UpdateTransactionInput } from "@/types";
 type Params = { params: { id: string } };
 
 export async function GET(_request: Request, { params }: Params) {
+  const session = await getServerSession(authOptions);
+  if (!session) return Response.json({ error: "Unauthorized" }, { status: 401 });
+  const userId = Number(session.user.id);
+
   try {
     const id = Number(params.id);
-    const transaction = await getTransactionById(id);
+    const transaction = await getTransactionById(id, userId);
     return Response.json({
       ...transaction,
       date: transaction.date.toISOString(),
@@ -22,10 +28,14 @@ export async function GET(_request: Request, { params }: Params) {
 }
 
 export async function PUT(request: Request, { params }: Params) {
+  const session = await getServerSession(authOptions);
+  if (!session) return Response.json({ error: "Unauthorized" }, { status: 401 });
+  const userId = Number(session.user.id);
+
   try {
     const id = Number(params.id);
     const body = (await request.json()) as UpdateTransactionInput;
-    const transaction = await updateTransaction(id, body);
+    const transaction = await updateTransaction(id, userId, body);
     return Response.json({
       ...transaction,
       date: transaction.date.toISOString(),
@@ -37,9 +47,13 @@ export async function PUT(request: Request, { params }: Params) {
 }
 
 export async function DELETE(_request: Request, { params }: Params) {
+  const session = await getServerSession(authOptions);
+  if (!session) return Response.json({ error: "Unauthorized" }, { status: 401 });
+  const userId = Number(session.user.id);
+
   try {
     const id = Number(params.id);
-    await deleteTransaction(id);
+    await deleteTransaction(id, userId);
     return new Response(null, { status: 204 });
   } catch {
     return Response.json({ error: "Transaction not found" }, { status: 404 });

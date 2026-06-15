@@ -12,8 +12,8 @@ import type {
   MonthlyInsights,
 } from "@/types";
 
-export async function getTransactions(filters: FilterState = {}) {
-  const where: Record<string, unknown> = {};
+export async function getTransactions(filters: FilterState = {}, userId: number) {
+  const where: Record<string, unknown> = { userId };
 
   if (filters.category) where.category = filters.category;
   if (filters.type) where.type = filters.type;
@@ -30,25 +30,27 @@ export async function getTransactions(filters: FilterState = {}) {
   });
 }
 
-export async function getTransactionById(id: number) {
-  return prisma.transaction.findUniqueOrThrow({ where: { id } });
+export async function getTransactionById(id: number, userId: number) {
+  return prisma.transaction.findFirstOrThrow({ where: { id, userId } });
 }
 
-export async function createTransaction(data: CreateTransactionInput) {
+export async function createTransaction(data: CreateTransactionInput, userId: number) {
   return prisma.transaction.create({
     data: {
       ...data,
       date: new Date(data.date),
+      userId,
     },
   });
 }
 
 export async function updateTransaction(
   id: number,
+  userId: number,
   data: UpdateTransactionInput
 ) {
   return prisma.transaction.update({
-    where: { id },
+    where: { id, userId },
     data: {
       ...data,
       ...(data.date ? { date: new Date(data.date) } : {}),
@@ -56,18 +58,18 @@ export async function updateTransaction(
   });
 }
 
-export async function deleteTransaction(id: number) {
-  return prisma.transaction.delete({ where: { id } });
+export async function deleteTransaction(id: number, userId: number) {
+  return prisma.transaction.deleteMany({ where: { id, userId } });
 }
 
-export async function getSummary(): Promise<Summary> {
+export async function getSummary(userId: number): Promise<Summary> {
   const [income, expense] = await Promise.all([
     prisma.transaction.aggregate({
-      where: { type: TransactionType.income },
+      where: { userId, type: TransactionType.income },
       _sum: { amount: true },
     }),
     prisma.transaction.aggregate({
-      where: { type: TransactionType.expense },
+      where: { userId, type: TransactionType.expense },
       _sum: { amount: true },
     }),
   ]);
@@ -82,14 +84,15 @@ export async function getSummary(): Promise<Summary> {
   };
 }
 
-export async function getChartData(): Promise<ChartData> {
+export async function getChartData(userId: number): Promise<ChartData> {
   const [grouped, all] = await Promise.all([
     prisma.transaction.groupBy({
       by: ["category"],
-      where: { type: TransactionType.expense },
+      where: { userId, type: TransactionType.expense },
       _sum: { amount: true },
     }),
     prisma.transaction.findMany({
+      where: { userId },
       orderBy: { date: "asc" },
     }),
   ]);
@@ -123,7 +126,7 @@ export async function getChartData(): Promise<ChartData> {
   return { pieData, lineData };
 }
 
-export async function getMonthlyInsights(): Promise<MonthlyInsights> {
+export async function getMonthlyInsights(userId: number): Promise<MonthlyInsights> {
   const now = new Date();
   const thisMonthStart = new Date(now.getFullYear(), now.getMonth(), 1);
   const lastMonthStart = new Date(now.getFullYear(), now.getMonth() - 1, 1);
@@ -132,12 +135,12 @@ export async function getMonthlyInsights(): Promise<MonthlyInsights> {
   const [thisMonthData, lastMonthData] = await Promise.all([
     prisma.transaction.groupBy({
       by: ["category"],
-      where: { type: TransactionType.expense, date: { gte: thisMonthStart } },
+      where: { userId, type: TransactionType.expense, date: { gte: thisMonthStart } },
       _sum: { amount: true },
     }),
     prisma.transaction.groupBy({
       by: ["category"],
-      where: { type: TransactionType.expense, date: { gte: lastMonthStart, lte: lastMonthEnd } },
+      where: { userId, type: TransactionType.expense, date: { gte: lastMonthStart, lte: lastMonthEnd } },
       _sum: { amount: true },
     }),
   ]);

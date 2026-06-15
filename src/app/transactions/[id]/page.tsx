@@ -1,4 +1,6 @@
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 import { getTransactionById } from "@/lib/db";
 import { EditTransactionClient } from "./EditTransactionClient";
 import type { Transaction } from "@/types";
@@ -8,12 +10,17 @@ interface Props {
 }
 
 export default async function EditTransactionPage({ params }: Props) {
+  const session = await getServerSession(authOptions);
+  if (!session) redirect("/signin");
+
   const id = Number(params.id);
   if (isNaN(id)) notFound();
 
+  const userId = Number(session.user.id);
+
   let transaction: Transaction;
   try {
-    const raw = await getTransactionById(id);
+    const raw = await getTransactionById(id, userId);
     transaction = {
       ...raw,
       date: raw.date.toISOString(),

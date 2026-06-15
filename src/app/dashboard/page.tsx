@@ -1,3 +1,6 @@
+import { getServerSession } from "next-auth";
+import { redirect } from "next/navigation";
+import { authOptions } from "@/lib/auth";
 import { getSummary, getChartData, getMonthlyInsights } from "@/lib/db";
 import { SummaryCards } from "@/components/dashboard/SummaryCards";
 import { ExpensePieChart } from "@/components/dashboard/ExpensePieChart";
@@ -6,10 +9,15 @@ import { InsightsCard } from "@/components/dashboard/InsightsCard";
 import { Card } from "@/components/ui/Card";
 
 export default async function DashboardPage() {
+  const session = await getServerSession(authOptions);
+  if (!session) redirect("/signin");
+
+  const userId = Number(session.user.id);
+
   const [summary, chartData, insights] = await Promise.all([
-    getSummary(),
-    getChartData(),
-    getMonthlyInsights(),
+    getSummary(userId),
+    getChartData(userId),
+    getMonthlyInsights(userId),
   ]);
 
   return (
