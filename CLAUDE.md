@@ -20,14 +20,22 @@ npx tsx prisma/seed.ts  # Seed the database (creates demo@fintrack.app / demo123
 
 ## Architecture
 
+### Layer structure
+`src/server/` is the backend boundary — guarded by `import "server-only"` in each file. Next.js will abort the build with a hard error if any of these are imported from a client component:
+- `src/server/prisma.ts` — Prisma singleton
+- `src/server/db.ts` — all database query functions (the only place Prisma is called)
+- `src/server/auth.ts` — NextAuth config
+
+`src/lib/` holds shared code safe to import from either layer: `categories.ts` and `utils.ts`.
+
 ### Database & ORM
 - **SQLite** via `better-sqlite3` with the `@prisma/adapter-better-sqlite3` driver. The Prisma client is **not** the standard npm client — it is generated to `./generated/` and imported from there (`../generated/client`, `../generated/enums`).
-- `src/lib/prisma.ts` holds the singleton client instance.
-- `src/lib/db.ts` is the only place that calls Prisma. Every exported function takes a `userId: number` as a required parameter and scopes all queries to that user — never call Prisma directly from pages or API routes.
+- `src/server/prisma.ts` holds the singleton client instance.
+- `src/server/db.ts` is the only place that calls Prisma. Every exported function takes a `userId: number` as a required parameter and scopes all queries to that user — never call Prisma directly from pages or API routes.
 
 ### Authentication
 - **NextAuth v4** with a `CredentialsProvider` (email + bcrypt password). Sessions use the **JWT strategy** — no sessions table in the database.
-- Config lives in `src/lib/auth.ts` (`authOptions`). The route handler is at `src/app/api/auth/[...nextauth]/route.ts`.
+- Config lives in `src/server/auth.ts` (`authOptions`). The route handler is at `src/app/api/auth/[...nextauth]/route.ts`.
 - `src/middleware.ts` protects `/dashboard` and `/transactions` — unauthenticated requests redirect to `/signin`.
 - Session type is extended in `src/types/next-auth.d.ts` to include `user.id: string`.
 - Every server page and API route calls `getServerSession(authOptions)` and converts `session.user.id` to a number before passing it to `db.ts`.

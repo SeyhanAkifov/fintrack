@@ -1,6 +1,6 @@
 import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
-import { getTransactions, createTransaction } from "@/lib/db";
+import { authOptions } from "@/server/auth";
+import { getTransactions, createTransaction } from "@/server/db";
 import type { FilterState, CreateTransactionInput, TransactionType } from "@/types";
 
 export async function GET(request: Request) {

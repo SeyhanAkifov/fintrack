@@ -1,7 +1,7 @@
 import { notFound, redirect } from "next/navigation";
 import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
-import { getTransactionById } from "@/lib/db";
+import { authOptions } from "@/server/auth";
+import { getTransactionById } from "@/server/db";
 import { EditTransactionClient } from "./EditTransactionClient";
 import type { Transaction } from "@/types";
 

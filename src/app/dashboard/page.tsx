@@ -1,7 +1,7 @@
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
-import { authOptions } from "@/lib/auth";
-import { getSummary, getChartData, getMonthlyInsights } from "@/lib/db";
+import { authOptions } from "@/server/auth";
+import { getSummary, getChartData, getMonthlyInsights } from "@/server/db";
 import { SummaryCards } from "@/components/dashboard/SummaryCards";
 import { ExpensePieChart } from "@/components/dashboard/ExpensePieChart";
 import { BalanceLineChart } from "@/components/dashboard/BalanceLineChart";

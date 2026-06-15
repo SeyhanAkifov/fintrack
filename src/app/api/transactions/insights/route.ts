@@ -1,6 +1,6 @@
 import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
-import { getMonthlyInsights } from "@/lib/db";
+import { authOptions } from "@/server/auth";
+import { getMonthlyInsights } from "@/server/db";
 
 export async function GET() {
   const session = await getServerSession(authOptions);

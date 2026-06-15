@@ -5,21 +5,30 @@ import { GET, POST } from "@/app/api/transactions/route";
 import { GET as GET_ONE, PUT, DELETE } from "@/app/api/transactions/[id]/route";
 import { GET as GET_SUMMARY } from "@/app/api/transactions/summary/route";
 
-jest.mock("@/lib/prisma", () => ({
-  prisma: {
-    transaction: {
-      findMany: jest.fn(),
-      create: jest.fn(),
-      findUniqueOrThrow: jest.fn(),
-      update: jest.fn(),
-      delete: jest.fn(),
-      aggregate: jest.fn(),
-      groupBy: jest.fn(),
-    },
-  },
+jest.mock("@/server/db", () => ({
+  getTransactions: jest.fn(),
+  createTransaction: jest.fn(),
+  getTransactionById: jest.fn(),
+  updateTransaction: jest.fn(),
+  deleteTransaction: jest.fn(),
+  getSummary: jest.fn(),
 }));
 
-const { prisma } = jest.requireMock("@/lib/prisma");
+jest.mock("@/server/auth", () => ({ authOptions: {} }));
+
+jest.mock("next-auth", () => ({
+  getServerSession: jest.fn(),
+}));
+
+const {
+  getTransactions,
+  createTransaction,
+  getTransactionById,
+  deleteTransaction,
+  getSummary,
+} = jest.requireMock("@/server/db");
+
+const { getServerSession } = jest.requireMock("next-auth");
 
 const mockTransaction = {
   id: 1,
@@ -31,12 +40,16 @@ const mockTransaction = {
   createdAt: new Date("2026-05-15"),
 };
 
+beforeEach(() => {
+  getServerSession.mockResolvedValue({ user: { id: "1", email: "test@test.com" } });
+});
+
 afterEach(() => jest.clearAllMocks());
 
 // ── GET /api/transactions ──────────────────────────────────────────────────
 describe("GET /api/transactions", () => {
   it("returns 200 with transaction list", async () => {
-    prisma.transaction.findMany.mockResolvedValueOnce([mockTransaction]);
+    getTransactions.mockResolvedValueOnce([mockTransaction]);
     const req = new Request("http://localhost/api/transactions");
     const res = await GET(req);
     expect(res.status).toBe(200);
@@ -45,17 +58,18 @@ describe("GET /api/transactions", () => {
     expect(body[0].category).toBe("Food");
   });
 
-  it("passes category filter to prisma", async () => {
-    prisma.transaction.findMany.mockResolvedValueOnce([]);
+  it("passes category filter to db", async () => {
+    getTransactions.mockResolvedValueOnce([]);
     const req = new Request("http://localhost/api/transactions?category=Food");
     await GET(req);
-    expect(prisma.transaction.findMany).toHaveBeenCalledWith(
-      expect.objectContaining({ where: expect.objectContaining({ category: "Food" }) })
+    expect(getTransactions).toHaveBeenCalledWith(
+      expect.objectContaining({ category: "Food" }),
+      1
     );
   });
 
   it("returns 200 with empty array when no results", async () => {
-    prisma.transaction.findMany.mockResolvedValueOnce([]);
+    getTransactions.mockResolvedValueOnce([]);
     const req = new Request("http://localhost/api/transactions");
     const res = await GET(req);
     expect(res.status).toBe(200);
@@ -66,7 +80,7 @@ describe("GET /api/transactions", () => {
 // ── POST /api/transactions ─────────────────────────────────────────────────
 describe("POST /api/transactions", () => {
   it("returns 201 with created transaction on valid body", async () => {
-    prisma.transaction.create.mockResolvedValueOnce(mockTransaction);
+    createTransaction.mockResolvedValueOnce(mockTransaction);
     const req = new Request("http://localhost/api/transactions", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -97,7 +111,7 @@ describe("POST /api/transactions", () => {
 // ── GET /api/transactions/[id] ─────────────────────────────────────────────
 describe("GET /api/transactions/[id]", () => {
   it("returns 200 with the transaction", async () => {
-    prisma.transaction.findUniqueOrThrow.mockResolvedValueOnce(mockTransaction);
+    getTransactionById.mockResolvedValueOnce(mockTransaction);
     const req = new Request("http://localhost/api/transactions/1");
     const res = await GET_ONE(req, { params: { id: "1" } });
     expect(res.status).toBe(200);
@@ -105,7 +119,7 @@ describe("GET /api/transactions/[id]", () => {
   });
 
   it("returns 404 when transaction is not found", async () => {
-    prisma.transaction.findUniqueOrThrow.mockRejectedValueOnce(new Error("Not found"));
+    getTransactionById.mockRejectedValueOnce(new Error("Not found"));
     const req = new Request("http://localhost/api/transactions/999");
     const res = await GET_ONE(req, { params: { id: "999" } });
     expect(res.status).toBe(404);
@@ -115,14 +129,14 @@ describe("GET /api/transactions/[id]", () => {
 // ── DELETE /api/transactions/[id] ─────────────────────────────────────────
 describe("DELETE /api/transactions/[id]", () => {
   it("returns 204 on success", async () => {
-    prisma.transaction.delete.mockResolvedValueOnce(mockTransaction);
+    deleteTransaction.mockResolvedValueOnce({ count: 1 });
     const req = new Request("http://localhost/api/transactions/1", { method: "DELETE" });
     const res = await DELETE(req, { params: { id: "1" } });
     expect(res.status).toBe(204);
   });
 
   it("returns 404 when transaction does not exist", async () => {
-    prisma.transaction.delete.mockRejectedValueOnce(new Error("Not found"));
+    deleteTransaction.mockRejectedValueOnce(new Error("Not found"));
     const req = new Request("http://localhost/api/transactions/999", { method: "DELETE" });
     const res = await DELETE(req, { params: { id: "999" } });
     expect(res.status).toBe(404);
@@ -132,9 +146,11 @@ describe("DELETE /api/transactions/[id]", () => {
 // ── GET /api/transactions/summary ─────────────────────────────────────────
 describe("GET /api/transactions/summary", () => {
   it("returns totalIncome, totalExpenses, balance", async () => {
-    prisma.transaction.aggregate
-      .mockResolvedValueOnce({ _sum: { amount: 7700 } })
-      .mockResolvedValueOnce({ _sum: { amount: 1345.98 } });
+    getSummary.mockResolvedValueOnce({
+      totalIncome: 7700,
+      totalExpenses: 1345.98,
+      balance: 6354.02,
+    });
 
     const res = await GET_SUMMARY();
     expect(res.status).toBe(200);

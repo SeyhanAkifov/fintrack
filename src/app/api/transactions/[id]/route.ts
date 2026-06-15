@@ -1,10 +1,10 @@
 import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { authOptions } from "@/server/auth";
 import {
   getTransactionById,
   updateTransaction,
   deleteTransaction,
-} from "@/lib/db";
+} from "@/server/db";
 import type { UpdateTransactionInput } from "@/types";
 
 type Params = { params: { id: string } };

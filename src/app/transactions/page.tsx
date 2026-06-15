@@ -1,7 +1,7 @@
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
-import { authOptions } from "@/lib/auth";
-import { getTransactions } from "@/lib/db";
+import { authOptions } from "@/server/auth";
+import { getTransactions } from "@/server/db";
 import { TransactionList } from "@/components/transactions/TransactionList";
 import type { Transaction } from "@/types";
 

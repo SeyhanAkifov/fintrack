@@ -15,29 +15,29 @@ describe("SummaryCards", () => {
     expect(screen.getByText("Balance")).toBeInTheDocument();
   });
 
-  it("applies green color to income", () => {
+  it("applies white text to income amount", () => {
     render(<SummaryCards {...props} />);
     const income = screen.getByText(/7\.700|7,700/);
-    expect(income).toHaveClass("text-green-600");
+    expect(income).toHaveClass("text-white");
   });
 
-  it("applies red color to expenses", () => {
+  it("applies white text to expenses amount", () => {
     render(<SummaryCards {...props} />);
     const expense = screen.getByText(/1\.345|1,345/);
-    expect(expense).toHaveClass("text-red-600");
+    expect(expense).toHaveClass("text-white");
   });
 
-  it("applies indigo color when balance is positive", () => {
+  it("applies indigo gradient when balance is positive", () => {
     render(<SummaryCards {...props} />);
     const balance = screen.getByText(/6\.354|6,354/);
-    expect(balance).toHaveClass("text-indigo-600");
+    expect(balance.closest(".rounded-2xl")).toHaveClass("from-indigo-500");
   });
 
-  it("applies red color when balance is negative", () => {
+  it("applies red gradient when balance is negative", () => {
     render(
       <SummaryCards totalIncome={100} totalExpenses={500} balance={-400} />
     );
     const balance = screen.getByText(/400/);
-    expect(balance).toHaveClass("text-red-600");
+    expect(balance.closest(".rounded-2xl")).toHaveClass("from-orange-400");
   });
 });
