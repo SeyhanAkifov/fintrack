@@ -40,6 +40,8 @@ pnpm-debug.log*
 coverage/
 .nyc_output/
 test-results/
+playwright-report/
+e2e/.auth.json
 
 # ── OS-Artefakte ──────────────────────────────────────────────────────────────
 .DS_Store
