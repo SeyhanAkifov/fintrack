@@ -51,6 +51,31 @@ export interface CreateTransactionInput {
 
 export type UpdateTransactionInput = Partial<CreateTransactionInput>;
 
+export interface Budget {
+  id: number;
+  category: string;
+  limitAmount: number;
+  month: number;
+  year: number;
+}
+
+export interface BudgetStatus {
+  id: number;
+  category: string;
+  limit: number;
+  spent: number;
+  remaining: number;
+  percentUsed: number;
+  isOverBudget: boolean;
+}
+
+export interface UpsertBudgetInput {
+  category: string;
+  limitAmount: number;
+  month: number;
+  year: number;
+}
+
 export interface CategoryInsight {
   category: string;
   thisMonth: number;

@@ -19,6 +19,20 @@ model User {
   name         String?
   createdAt    DateTime      @default(now())
   transactions Transaction[]
+  budgets      Budget[]
+}
+
+model Budget {
+  id          Int      @id @default(autoincrement())
+  userId      Int
+  user        User     @relation(fields: [userId], references: [id])
+  category    String
+  limitAmount Float
+  month       Int
+  year        Int
+  createdAt   DateTime @default(now())
+
+  @@unique([userId, category, month, year])
 }
 
 model Transaction {

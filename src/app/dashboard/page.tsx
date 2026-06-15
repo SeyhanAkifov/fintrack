@@ -1,11 +1,12 @@
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import { authOptions } from "@/server/auth";
-import { getSummary, getChartData, getMonthlyInsights } from "@/server/db";
+import { getSummary, getChartData, getMonthlyInsights, getBudgetStatus } from "@/server/db";
 import { SummaryCards } from "@/components/dashboard/SummaryCards";
 import { ExpensePieChart } from "@/components/dashboard/ExpensePieChart";
 import { BalanceLineChart } from "@/components/dashboard/BalanceLineChart";
 import { InsightsCard } from "@/components/dashboard/InsightsCard";
+import { BudgetHealthCard } from "@/components/dashboard/BudgetHealthCard";
 import { Card } from "@/components/ui/Card";
 
 export default async function DashboardPage() {
@@ -13,11 +14,13 @@ export default async function DashboardPage() {
   if (!session) redirect("/signin");
 
   const userId = Number(session.user.id);
+  const now = new Date();
 
-  const [summary, chartData, insights] = await Promise.all([
+  const [summary, chartData, insights, budgetStatuses] = await Promise.all([
     getSummary(userId),
     getChartData(userId),
     getMonthlyInsights(userId),
+    getBudgetStatus(userId, now.getFullYear(), now.getMonth() + 1),
   ]);
 
   return (
@@ -30,6 +33,7 @@ export default async function DashboardPage() {
       </div>
 
       <SummaryCards {...summary} />
+      <BudgetHealthCard statuses={budgetStatuses} month={now.getMonth() + 1} year={now.getFullYear()} />
       <InsightsCard insights={insights} />
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">

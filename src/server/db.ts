@@ -11,6 +11,8 @@ import type {
   UpdateTransactionInput,
   CategoryInsight,
   MonthlyInsights,
+  BudgetStatus,
+  UpsertBudgetInput,
 } from "@/types";
 
 export async function getTransactions(filters: FilterState = {}, userId: number) {
@@ -125,6 +127,64 @@ export async function getChartData(userId: number): Promise<ChartData> {
   });
 
   return { pieData, lineData };
+}
+
+export async function getBudgetStatus(
+  userId: number,
+  year: number,
+  month: number
+): Promise<BudgetStatus[]> {
+  const budgets = await prisma.budget.findMany({
+    where: { userId, month, year },
+    orderBy: { category: "asc" },
+  });
+
+  if (budgets.length === 0) return [];
+
+  const from = new Date(year, month - 1, 1);
+  const to = new Date(year, month, 0, 23, 59, 59);
+
+  const spendingRaw = await prisma.transaction.groupBy({
+    by: ["category"],
+    where: { userId, type: TransactionType.expense, date: { gte: from, lte: to } },
+    _sum: { amount: true },
+  });
+
+  const spendingMap = new Map(spendingRaw.map((r) => [r.category, r._sum.amount ?? 0]));
+
+  return budgets.map((b) => {
+    const spent = spendingMap.get(b.category) ?? 0;
+    const remaining = b.limitAmount - spent;
+    const percentUsed = b.limitAmount > 0 ? (spent / b.limitAmount) * 100 : 0;
+    return {
+      id: b.id,
+      category: b.category,
+      limit: b.limitAmount,
+      spent,
+      remaining,
+      percentUsed,
+      isOverBudget: spent > b.limitAmount,
+    };
+  });
+}
+
+export async function upsertBudget(data: UpsertBudgetInput, userId: number) {
+  return prisma.budget.upsert({
+    where: {
+      userId_category_month_year: {
+        userId,
+        category: data.category,
+        month: data.month,
+        year: data.year,
+      },
+    },
+    create: { ...data, userId },
+    update: { limitAmount: data.limitAmount },
+  });
+}
+
+export async function deleteBudget(id: number, userId: number) {
+  return prisma.budget.deleteMany({ where: { id, userId } });
 }
 
 export async function getMonthlyInsights(userId: number): Promise<MonthlyInsights> {
