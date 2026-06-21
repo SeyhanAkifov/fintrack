@@ -1,5 +1,11 @@
 "use client";
 
+/**
+ * IconPicker — grid picker for choosing a category emoji icon.
+ * Created:  2026-06-21
+ * Modified: 2026-06-21
+ */
+
 import { cn } from "@/lib/utils";
 
 /** Curated set of icons suited to finance categories. */
@@ -20,6 +26,7 @@ interface IconPickerProps {
   label?: string;
 }
 
+// Renders a selectable grid of emoji icons for a category.
 export function IconPicker({ value, onChange, label = "Icon" }: IconPickerProps) {
   return (
     <div className="flex flex-col gap-1.5">

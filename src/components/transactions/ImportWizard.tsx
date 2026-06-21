@@ -1,5 +1,11 @@
 "use client";
 
+/**
+ * ImportWizard — CSV import flow: upload, map columns, preview, and import.
+ * Created:  2026-06-21
+ * Modified: 2026-06-21
+ */
+
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
@@ -22,11 +28,13 @@ const DATE_FORMATS: { value: DateFormat; label: string }[] = [
   { value: "mdy", label: "MM/DD/YYYY" },
 ];
 
+// Finds the first header index matching the given pattern (-1 if none).
 function guessColumn(headers: string[], patterns: RegExp): number {
   const i = headers.findIndex((h) => patterns.test(h.toLowerCase()));
   return i;
 }
 
+// Multi-step CSV importer: upload, map columns, preview rows, and bulk-import.
 export function ImportWizard() {
   const { categories } = useCategories();
   const categoryNames = categories.map((c) => c.name);

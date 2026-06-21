@@ -1,8 +1,16 @@
 "use client";
 
+/**
+ * useCategories — client hook to fetch and cache categories.
+ * Created:  2026-06-21
+ * Modified: 2026-06-21
+ */
+
+
 import { useState, useEffect, useCallback, useMemo } from "react";
 import type { Category } from "@/types";
 
+// Fetches the user's categories and a name->{color,icon} lookup map.
 export function useCategories() {
   const [categories, setCategories] = useState<Category[]>([]);
   const [isLoading, setIsLoading] = useState(true);

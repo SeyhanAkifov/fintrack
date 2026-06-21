@@ -1,5 +1,11 @@
 "use client";
 
+/**
+ * RecurringForm — form to create or edit a recurring transaction template.
+ * Created:  2026-06-21
+ * Modified: 2026-06-21
+ */
+
 import { useState, useEffect } from "react";
 import { Input } from "@/components/ui/Input";
 import { Select } from "@/components/ui/Select";
@@ -23,10 +29,12 @@ const FREQUENCY_OPTIONS = [
   { value: "weekly", label: "Weekly" },
 ];
 
+// Trims an ISO timestamp to a YYYY-MM-DD value for <input type="date">.
 function toDateInput(iso: string) {
   return iso.slice(0, 10);
 }
 
+// Form to create or edit a recurring transaction template.
 export function RecurringForm({ editing, onSuccess, onCancel }: RecurringFormProps) {
   const { categories } = useCategories();
   const categoryOptions = categories.map((c) => ({ value: c.name, label: c.name }));
@@ -51,6 +59,7 @@ export function RecurringForm({ editing, onSuccess, onCancel }: RecurringFormPro
     }
   }, [categories, editing, category]);
 
+  // Validates inputs and creates/updates the template via the API.
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     const amt = parseFloat(amount);

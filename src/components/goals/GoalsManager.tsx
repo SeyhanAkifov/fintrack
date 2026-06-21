@@ -1,5 +1,11 @@
 "use client";
 
+/**
+ * GoalsManager — lists savings goals with contribute, edit, and delete actions.
+ * Created:  2026-06-21
+ * Modified: 2026-06-21
+ */
+
 import { useState } from "react";
 import { Modal } from "@/components/ui/Modal";
 import { Button } from "@/components/ui/Button";
@@ -14,6 +20,7 @@ interface GoalsManagerProps {
   initialGoals: Goal[];
 }
 
+// Whole months from today until the given deadline (can be negative).
 function monthsUntil(deadline: string): number {
   const now = new Date();
   const d = new Date(deadline);
@@ -22,6 +29,7 @@ function monthsUntil(deadline: string): number {
   return months;
 }
 
+// Builds the per-goal status line (reached / per-month needed / deadline passed).
 function projection(goal: Goal): string | null {
   const remaining = goal.targetAmount - goal.currentAmount;
   if (remaining <= 0) return "🎉 Goal reached!";
@@ -32,6 +40,7 @@ function projection(goal: Goal): string | null {
   return `${formatCurrency(remaining / months)} / month to reach it`;
 }
 
+// Lists savings goals with contribute, edit, and delete actions.
 export function GoalsManager({ initialGoals }: GoalsManagerProps) {
   const { goals, isLoading, error, refetch } = useGoals(initialGoals);
   const [formOpen, setFormOpen] = useState(false);

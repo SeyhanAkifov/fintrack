@@ -1,5 +1,12 @@
 "use client";
 
+/**
+ * CategoriesManager — manage categories: add, edit, delete (with in-use guard).
+ * Created:  2026-06-21
+ * Modified: 2026-06-21
+ */
+
+
 import { useState } from "react";
 import { Modal } from "@/components/ui/Modal";
 import { Button } from "@/components/ui/Button";
@@ -11,6 +18,7 @@ interface CategoriesManagerProps {
   initialCategories: Category[];
 }
 
+// Manages the user's categories: list, add, edit, and delete (blocked when in use).
 export function CategoriesManager({ initialCategories }: CategoriesManagerProps) {
   const [categories, setCategories] = useState<Category[]>(initialCategories);
   const [formOpen, setFormOpen] = useState(false);

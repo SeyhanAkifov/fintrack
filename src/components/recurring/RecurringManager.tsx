@@ -1,5 +1,11 @@
 "use client";
 
+/**
+ * RecurringManager — lists recurring templates with pause, edit, and delete actions.
+ * Created:  2026-06-21
+ * Modified: 2026-06-21
+ */
+
 import { useState } from "react";
 import { Modal } from "@/components/ui/Modal";
 import { Button } from "@/components/ui/Button";

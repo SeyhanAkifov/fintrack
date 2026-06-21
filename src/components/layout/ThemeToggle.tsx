@@ -1,7 +1,14 @@
 "use client";
 
+/**
+ * ThemeToggle — navbar button that toggles and persists light/dark mode.
+ * Created:  2026-06-21
+ * Modified: 2026-06-21
+ */
+
 import { useEffect, useState } from "react";
 
+// Button that toggles dark mode and persists the choice to localStorage.
 export function ThemeToggle() {
   const [isDark, setIsDark] = useState(false);
   const [mounted, setMounted] = useState(false);
@@ -11,6 +18,7 @@ export function ThemeToggle() {
     setIsDark(document.documentElement.classList.contains("dark"));
   }, []);
 
+  // Flips the theme, updates the <html> class, and stores the preference.
   function toggle() {
     const next = !isDark;
     setIsDark(next);

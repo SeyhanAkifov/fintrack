@@ -1,5 +1,11 @@
 "use client";
 
+/**
+ * GoalForm — form to create or edit a savings goal.
+ * Created:  2026-06-21
+ * Modified: 2026-06-21
+ */
+
 import { useState } from "react";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
@@ -11,6 +17,7 @@ interface GoalFormProps {
   onCancel: () => void;
 }
 
+// Renders the create/edit form for a savings goal and submits it to the API.
 export function GoalForm({ editing, onSuccess, onCancel }: GoalFormProps) {
   const [name, setName] = useState(editing?.name ?? "");
   const [target, setTarget] = useState(editing ? String(editing.targetAmount) : "");
@@ -20,6 +27,7 @@ export function GoalForm({ editing, onSuccess, onCancel }: GoalFormProps) {
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
+  // Validates the inputs and creates/updates the goal, then calls onSuccess.
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     const targetNum = parseFloat(target);

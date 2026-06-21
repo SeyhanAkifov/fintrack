@@ -1,8 +1,15 @@
 "use client";
 
+/**
+ * useGoals — client hook to fetch savings goals.
+ * Created:  2026-06-21
+ * Modified: 2026-06-21
+ */
+
 import { useState, useEffect, useCallback } from "react";
 import type { Goal } from "@/types";
 
+// Fetches the user's savings goals; exposes goals, loading, error, and refetch.
 export function useGoals(initial: Goal[] = []) {
   const [goals, setGoals] = useState<Goal[]>(initial);
   const [isLoading, setIsLoading] = useState(false);

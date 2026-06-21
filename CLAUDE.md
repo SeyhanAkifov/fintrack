@@ -61,3 +61,24 @@ All routes are under `src/app/api/transactions/`. Each handler checks the sessio
 - Tests live in `__tests__/` and use **Jest + React Testing Library** with jsdom.
 - CSS imports are mocked via `__mocks__/styleMock.js`.
 - The `@/` alias is resolved in Jest via `moduleNameMapper` in `jest.config.ts`.
+
+### Component & function comment convention
+When **creating a new JS/TS component file** (`.tsx`/`.ts` under `src/`), always start it with a file header comment that records the created and modified dates (use today's date in `YYYY-MM-DD`):
+
+```tsx
+/**
+ * ComponentName — one-line summary of what this component does.
+ * Created:  2026-06-21
+ * Modified: 2026-06-21
+ */
+```
+
+- On **every later edit** to that file, update the `Modified:` date to the current date (leave `Created:` unchanged).
+- For **each function** (components, hooks, handlers, helpers), add a short comment directly above it describing its functionality in one line:
+
+```tsx
+// Formats a number as an EUR currency string (German locale).
+export function formatCurrency(value: number) { ... }
+```
+
+Keep descriptions concise (one line). This applies to new code; when editing existing files, add the header/comments if missing rather than rewriting unrelated code.

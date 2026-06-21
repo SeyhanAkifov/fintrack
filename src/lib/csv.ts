@@ -1,3 +1,9 @@
+/**
+ * csv — CSV parsing and bank-statement import helpers.
+ * Created:  2026-06-21
+ * Modified: 2026-06-21
+ */
+
 // Lightweight CSV utilities for the bank-statement import flow. No dependencies.
 
 /** Guess the delimiter from a sample line (comma, semicolon, or tab). */

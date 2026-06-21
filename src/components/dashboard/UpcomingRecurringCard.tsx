@@ -1,3 +1,9 @@
+/**
+ * UpcomingRecurringCard — dashboard widget listing upcoming recurring payments.
+ * Created:  2026-06-21
+ * Modified: 2026-06-21
+ */
+
 import Link from "next/link";
 import { formatCurrency } from "@/lib/utils";
 import type { RecurringTransaction } from "@/types";
@@ -7,6 +13,7 @@ interface UpcomingRecurringCardProps {
   icons: Record<string, string>;
 }
 
+// Formats an ISO date as "DD Mon" (en-GB).
 function formatDate(iso: string): string {
   return new Intl.DateTimeFormat("en-GB", {
     day: "2-digit",
@@ -14,6 +21,7 @@ function formatDate(iso: string): string {
   }).format(new Date(iso));
 }
 
+// Dashboard widget listing the next due recurring transactions.
 export function UpcomingRecurringCard({ upcoming, icons }: UpcomingRecurringCardProps) {
   return (
     <div className="rounded-2xl bg-white/70 dark:bg-gray-800/60 backdrop-blur border border-white dark:border-gray-700 shadow-sm px-6 py-4">

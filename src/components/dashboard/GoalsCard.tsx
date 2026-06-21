@@ -1,3 +1,9 @@
+/**
+ * GoalsCard — dashboard widget showing progress toward savings goals.
+ * Created:  2026-06-21
+ * Modified: 2026-06-21
+ */
+
 import Link from "next/link";
 import { formatCurrency } from "@/lib/utils";
 import type { Goal } from "@/types";
@@ -6,6 +12,7 @@ interface GoalsCardProps {
   goals: Goal[];
 }
 
+// Compact dashboard widget showing progress bars for the user's savings goals.
 export function GoalsCard({ goals }: GoalsCardProps) {
   return (
     <div className="rounded-2xl bg-white/70 dark:bg-gray-800/60 backdrop-blur border border-white dark:border-gray-700 shadow-sm px-6 py-4">

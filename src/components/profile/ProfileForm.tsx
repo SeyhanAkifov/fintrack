@@ -1,5 +1,11 @@
 "use client";
 
+/**
+ * ProfileForm — forms to change the display name and password.
+ * Created:  2026-06-21
+ * Modified: 2026-06-21
+ */
+
 import { useState } from "react";
 import { useSession } from "next-auth/react";
 import { Card } from "@/components/ui/Card";
@@ -11,6 +17,7 @@ interface ProfileFormProps {
   initialName: string;
 }
 
+// Two forms: update the display name and change the password.
 export function ProfileForm({ email, initialName }: ProfileFormProps) {
   const { update } = useSession();
 
@@ -19,6 +26,7 @@ export function ProfileForm({ email, initialName }: ProfileFormProps) {
   const [savingName, setSavingName] = useState(false);
   const [nameMsg, setNameMsg] = useState<{ ok: boolean; text: string } | null>(null);
 
+  // Saves the new display name and refreshes the session so the navbar updates.
   async function saveName(e: React.FormEvent) {
     e.preventDefault();
     setSavingName(true);
@@ -50,6 +58,7 @@ export function ProfileForm({ email, initialName }: ProfileFormProps) {
   const [savingPw, setSavingPw] = useState(false);
   const [pwMsg, setPwMsg] = useState<{ ok: boolean; text: string } | null>(null);
 
+  // Validates and submits a password change (verifies the current password server-side).
   async function changePassword(e: React.FormEvent) {
     e.preventDefault();
     setPwMsg(null);

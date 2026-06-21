@@ -1,5 +1,12 @@
 "use client";
 
+/**
+ * CategoryForm — form to create or edit a category (name, icon, color).
+ * Created:  2026-06-21
+ * Modified: 2026-06-21
+ */
+
+
 import { useState } from "react";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
@@ -13,6 +20,7 @@ interface CategoryFormProps {
   onCancel: () => void;
 }
 
+// Form to create or edit a category (name, icon, color) with a live preview.
 export function CategoryForm({ editing, onSuccess, onCancel }: CategoryFormProps) {
   const [name, setName] = useState(editing?.name ?? "");
   const [color, setColor] = useState(editing?.color ?? DEFAULT_CATEGORY_COLOR);
