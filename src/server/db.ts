@@ -20,6 +20,8 @@ import type {
   UpdateRecurringInput,
   ImportRow,
   ImportResult,
+  CreateGoalInput,
+  UpdateGoalInput,
 } from "@/types";
 
 /** Thrown when a category cannot be deleted because transactions/budgets use it. */
@@ -39,7 +41,7 @@ export class InvalidPasswordError extends Error {
 }
 
 export async function getUserById(userId: number) {
-  return prisma.user.findUniqueOrThrow({
+  return prisma.user.findUnique({
     where: { id: userId },
     select: { id: true, email: true, name: true, createdAt: true },
   });
@@ -493,6 +495,58 @@ export async function runDueRecurringTransactions(userId: number): Promise<numbe
   }
 
   return created;
+}
+
+// ── Savings goals ────────────────────────────────────────────────────────────
+
+export async function getGoals(userId: number) {
+  return prisma.goal.findMany({
+    where: { userId },
+    orderBy: { createdAt: "asc" },
+  });
+}
+
+export async function createGoal(data: CreateGoalInput, userId: number) {
+  return prisma.goal.create({
+    data: {
+      name: data.name.trim(),
+      targetAmount: data.targetAmount,
+      currentAmount: data.currentAmount ?? 0,
+      deadline: data.deadline ? new Date(data.deadline) : null,
+      color: data.color ?? "#6366f1",
+      userId,
+    },
+  });
+}
+
+export async function updateGoal(
+  id: number,
+  userId: number,
+  data: UpdateGoalInput
+) {
+  return prisma.goal.update({
+    where: { id, userId },
+    data: {
+      ...(data.name !== undefined ? { name: data.name.trim() } : {}),
+      ...(data.targetAmount !== undefined ? { targetAmount: data.targetAmount } : {}),
+      ...(data.currentAmount !== undefined ? { currentAmount: data.currentAmount } : {}),
+      ...(data.deadline !== undefined
+        ? { deadline: data.deadline ? new Date(data.deadline) : null }
+        : {}),
+      ...(data.color !== undefined ? { color: data.color } : {}),
+    },
+  });
+}
+
+export async function deleteGoal(id: number, userId: number) {
+  return prisma.goal.deleteMany({ where: { id, userId } });
+}
+
+/** Adds `amount` to a goal's saved total (clamped at 0). */
+export async function contributeToGoal(id: number, userId: number, amount: number) {
+  const goal = await prisma.goal.findFirstOrThrow({ where: { id, userId } });
+  const next = Math.max(0, goal.currentAmount + amount);
+  return prisma.goal.update({ where: { id }, data: { currentAmount: next } });
 }
 
 export async function getMonthlyInsights(userId: number): Promise<MonthlyInsights> {

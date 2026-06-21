@@ -9,6 +9,8 @@ export default async function ProfilePage() {
   if (!session) redirect("/signin");
 
   const user = await getUserById(Number(session.user.id));
+  // The session can outlive its user (e.g. after a DB reseed) — force re-auth.
+  if (!user) redirect("/signin");
 
   return (
     <div className="flex flex-col gap-6">

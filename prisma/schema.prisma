@@ -27,6 +27,19 @@ model User {
   budgets      Budget[]
   categories   Category[]
   recurring    RecurringTransaction[]
+  goals        Goal[]
+}
+
+model Goal {
+  id            Int       @id @default(autoincrement())
+  userId        Int
+  user          User      @relation(fields: [userId], references: [id])
+  name          String
+  targetAmount  Float
+  currentAmount Float     @default(0)
+  deadline      DateTime?
+  color         String    @default("#6366f1")
+  createdAt     DateTime  @default(now())
 }
 
 model Category {
