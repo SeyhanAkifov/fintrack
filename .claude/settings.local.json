@@ -5,7 +5,11 @@
       "Bash(node -e \"const m = require\\('@prisma/adapter-better-sqlite3'\\); console.log\\(Object.keys\\(m\\)\\)\")",
       "Bash(dir \"c:\\\\Users\\\\SeyhanAkifov\\\\Desktop\\\\fintrack\\\\prisma\")",
       "Bash(npx prisma *)",
-      "Bash(DATABASE_URL=\"file:./dev.db\" npx prisma migrate dev --name init)"
+      "Bash(DATABASE_URL=\"file:./dev.db\" npx prisma migrate dev --name init)",
+      "Read(//c/Users/SeyhanAkifov/AppData/Roaming/Claude/local-agent-mode-sessions/skills-plugin/a17e8f0c-7d6a-4a18-9ae3-0941bda5beb6/75339b50-6122-4b57-8e67-0fcfc0c2aae8/skills/docx/**)",
+      "Bash(pandoc --from docx --to markdown \"C:\\\\Users\\\\SeyhanAkifov\\\\Downloads\\\\Project-Assignment \\(2\\).docx\")",
+      "Bash(python -c ' *)",
+      "Bash(python -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\('DEPS:', list\\(d.get\\('dependencies',{}\\).keys\\(\\)\\)\\); print\\('DEV:', list\\(d.get\\('devDependencies',{}\\).keys\\(\\)\\)\\)\")"
     ]
   }
 }
