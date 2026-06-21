@@ -4,7 +4,7 @@ import { useCallback, useRef, useState } from "react";
 import { Select } from "@/components/ui/Select";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
-import { CATEGORIES } from "@/lib/categories";
+import { useCategories } from "@/hooks/useCategories";
 import type { FilterState } from "@/types";
 
 interface TransactionFiltersProps {
@@ -22,11 +22,6 @@ function buildExportUrl(filters: FilterState): string {
   return `/api/transactions/export${qs ? `?${qs}` : ""}`;
 }
 
-const CATEGORY_OPTIONS = [
-  { value: "", label: "All Categories" },
-  ...CATEGORIES.map((c) => ({ value: c, label: c })),
-];
-
 const TYPE_OPTIONS = [
   { value: "", label: "All Types" },
   { value: "income", label: "Income" },
@@ -34,6 +29,12 @@ const TYPE_OPTIONS = [
 ];
 
 export function TransactionFilters({ filters, onFilterChange }: TransactionFiltersProps) {
+  const { categories } = useCategories();
+  const categoryOptions = [
+    { value: "", label: "All Categories" },
+    ...categories.map((c) => ({ value: c.name, label: c.name })),
+  ];
+
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [selectedMonth, setSelectedMonth] = useState("");
 
@@ -69,7 +70,7 @@ export function TransactionFilters({ filters, onFilterChange }: TransactionFilte
   return (
     <div className="flex flex-wrap gap-3 items-end">
       <Select
-        options={CATEGORY_OPTIONS}
+        options={categoryOptions}
         value={filters.category ?? ""}
         onChange={(e) => handleChange({ category: e.target.value || null })}
         className="w-40"

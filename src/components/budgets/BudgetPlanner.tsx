@@ -6,27 +6,15 @@ import { Button } from "@/components/ui/Button";
 import { DeleteConfirmModal } from "@/components/transactions/DeleteConfirmModal";
 import { BudgetForm } from "./BudgetForm";
 import { useBudgets } from "@/hooks/useBudgets";
+import { useCategories } from "@/hooks/useCategories";
 import { formatCurrency, cn } from "@/lib/utils";
-import { CATEGORIES } from "@/lib/categories";
+import { DEFAULT_CATEGORY_COLOR } from "@/lib/categories";
 import type { BudgetStatus } from "@/types";
 
 const MONTH_NAMES = [
   "January", "February", "March", "April", "May", "June",
   "July", "August", "September", "October", "November", "December",
 ];
-
-const CATEGORY_COLORS: Record<string, string> = {
-  Food:          "#6366f1",
-  Rent:          "#8b5cf6",
-  Salary:        "#10b981",
-  Transport:     "#f59e0b",
-  Entertainment: "#ec4899",
-  Subscriptions: "#3b82f6",
-  Utilities:     "#f97316",
-  Freelance:     "#14b8a6",
-  Health:        "#e11d48",
-  Other:         "#84cc16",
-};
 
 function barColor(pct: number): string {
   if (pct >= 100) return "bg-rose-500";
@@ -49,10 +37,12 @@ export function BudgetPlanner({ initialStatuses, initialYear, initialMonth }: Bu
   const [deleteId, setDeleteId] = useState<number | null>(null);
 
   const { statuses, isLoading, error, refetch } = useBudgets(year, month);
+  const { categories, byName } = useCategories();
   const displayed = isLoading && statuses.length === 0 ? initialStatuses : statuses;
 
   const budgetedCategories = displayed.map((s) => s.category);
-  const allCategoriesBudgeted = CATEGORIES.every((c) => budgetedCategories.includes(c));
+  const allCategoriesBudgeted =
+    categories.length > 0 && categories.every((c) => budgetedCategories.includes(c.name));
 
   function prevMonth() {
     if (month === 1) { setMonth(12); setYear((y) => y - 1); }
@@ -156,6 +146,7 @@ export function BudgetPlanner({ initialStatuses, initialYear, initialMonth }: Bu
               <BudgetRow
                 key={status.id}
                 status={status}
+                color={byName.get(status.category)?.color ?? DEFAULT_CATEGORY_COLOR}
                 onEdit={handleEdit}
                 onDelete={setDeleteId}
               />
@@ -195,14 +186,14 @@ export function BudgetPlanner({ initialStatuses, initialYear, initialMonth }: Bu
 
 interface BudgetRowProps {
   status: BudgetStatus;
+  color: string;
   onEdit: (status: BudgetStatus) => void;
   onDelete: (id: number) => void;
 }
 
-function BudgetRow({ status, onEdit, onDelete }: BudgetRowProps) {
+function BudgetRow({ status, color: dotColor, onEdit, onDelete }: BudgetRowProps) {
   const pct = Math.min(status.percentUsed, 100);
   const color = barColor(status.percentUsed);
-  const dotColor = CATEGORY_COLORS[status.category] ?? "#6366f1";
 
   return (
     <div className="flex items-center gap-4 px-5 py-4 hover:bg-gray-50/60 transition-colors group">

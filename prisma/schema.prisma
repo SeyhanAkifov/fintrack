@@ -20,6 +20,19 @@ model User {
   createdAt    DateTime      @default(now())
   transactions Transaction[]
   budgets      Budget[]
+  categories   Category[]
+}
+
+model Category {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id])
+  name      String
+  color     String
+  icon      String
+  createdAt DateTime @default(now())
+
+  @@unique([userId, name])
 }
 
 model Budget {

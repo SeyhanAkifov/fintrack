@@ -1,10 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Input } from "@/components/ui/Input";
 import { Select } from "@/components/ui/Select";
 import { Button } from "@/components/ui/Button";
-import { CATEGORIES } from "@/lib/categories";
+import { useCategories } from "@/hooks/useCategories";
 import type { Transaction, CreateTransactionInput } from "@/types";
 
 interface TransactionFormProps {
@@ -13,7 +13,6 @@ interface TransactionFormProps {
   onCancel: () => void;
 }
 
-const CATEGORY_OPTIONS = CATEGORIES.map((c) => ({ value: c, label: c }));
 const TYPE_OPTIONS = [
   { value: "income", label: "Income" },
   { value: "expense", label: "Expense" },
@@ -38,15 +37,25 @@ function toDateInput(iso: string) {
 }
 
 export function TransactionForm({ transaction, onSuccess, onCancel }: TransactionFormProps) {
+  const { categories } = useCategories();
+  const categoryOptions = categories.map((c) => ({ value: c.name, label: c.name }));
+
   const [form, setForm] = useState<FormState>({
     amount: transaction ? String(transaction.amount) : "",
     type: transaction?.type ?? "expense",
-    category: transaction?.category ?? CATEGORIES[0],
+    category: transaction?.category ?? "",
     date: transaction ? toDateInput(transaction.date) : toDateInput(new Date().toISOString()),
     note: transaction?.note ?? "",
   });
   const [errors, setErrors] = useState<FormErrors>({});
   const [submitting, setSubmitting] = useState(false);
+
+  // Default to the first category once they load (create mode only).
+  useEffect(() => {
+    if (!transaction && !form.category && categories.length > 0) {
+      setForm((prev) => ({ ...prev, category: categories[0].name }));
+    }
+  }, [categories, transaction, form.category]);
 
   const set = (field: keyof FormState) => (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
@@ -125,7 +134,8 @@ export function TransactionForm({ transaction, onSuccess, onCancel }: Transactio
         <Select
           id="category"
           label="Category"
-          options={CATEGORY_OPTIONS}
+          options={categoryOptions}
+          placeholder="Select a category"
           value={form.category}
           onChange={set("category")}
           error={errors.category}

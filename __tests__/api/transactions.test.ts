@@ -12,6 +12,7 @@ jest.mock("@/server/db", () => ({
   updateTransaction: jest.fn(),
   deleteTransaction: jest.fn(),
   getSummary: jest.fn(),
+  categoryExists: jest.fn().mockResolvedValue(true),
 }));
 
 jest.mock("@/server/auth", () => ({ authOptions: {} }));

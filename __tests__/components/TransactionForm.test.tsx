@@ -1,6 +1,19 @@
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { TransactionForm } from "@/components/transactions/TransactionForm";
 
+jest.mock("@/hooks/useCategories", () => ({
+  useCategories: () => ({
+    categories: [
+      { id: 1, name: "Food", color: "#6366f1", icon: "🍽️" },
+      { id: 2, name: "Rent", color: "#8b5cf6", icon: "🏠" },
+    ],
+    byName: new Map(),
+    isLoading: false,
+    error: null,
+    refetch: jest.fn(),
+  }),
+}));
+
 const mockTransaction = {
   id: 1,
   amount: 99.9,

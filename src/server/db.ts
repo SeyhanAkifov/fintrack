@@ -13,7 +13,17 @@ import type {
   MonthlyInsights,
   BudgetStatus,
   UpsertBudgetInput,
+  CreateCategoryInput,
+  UpdateCategoryInput,
 } from "@/types";
+
+/** Thrown when a category cannot be deleted because transactions/budgets use it. */
+export class CategoryInUseError extends Error {
+  constructor(public usageCount: number) {
+    super("Category is in use");
+    this.name = "CategoryInUseError";
+  }
+}
 
 export async function getTransactions(filters: FilterState = {}, userId: number) {
   const where: Record<string, unknown> = { userId };
@@ -185,6 +195,70 @@ export async function upsertBudget(data: UpsertBudgetInput, userId: number) {
 
 export async function deleteBudget(id: number, userId: number) {
   return prisma.budget.deleteMany({ where: { id, userId } });
+}
+
+export async function getCategories(userId: number) {
+  return prisma.category.findMany({
+    where: { userId },
+    orderBy: { name: "asc" },
+  });
+}
+
+export async function categoryExists(name: string, userId: number) {
+  const count = await prisma.category.count({ where: { userId, name } });
+  return count > 0;
+}
+
+export async function createCategory(data: CreateCategoryInput, userId: number) {
+  return prisma.category.create({ data: { ...data, userId } });
+}
+
+export async function updateCategory(
+  id: number,
+  userId: number,
+  data: UpdateCategoryInput
+) {
+  const existing = await prisma.category.findFirstOrThrow({
+    where: { id, userId },
+  });
+
+  // If the name changed, cascade it to existing transactions and budgets so
+  // their denormalized category strings stay in sync.
+  if (data.name && data.name !== existing.name) {
+    return prisma.$transaction(async (tx) => {
+      const updated = await tx.category.update({
+        where: { id },
+        data,
+      });
+      await tx.transaction.updateMany({
+        where: { userId, category: existing.name },
+        data: { category: data.name },
+      });
+      await tx.budget.updateMany({
+        where: { userId, category: existing.name },
+        data: { category: data.name },
+      });
+      return updated;
+    });
+  }
+
+  return prisma.category.update({ where: { id }, data });
+}
+
+export async function deleteCategory(id: number, userId: number) {
+  const existing = await prisma.category.findFirstOrThrow({
+    where: { id, userId },
+  });
+
+  const [txCount, budgetCount] = await Promise.all([
+    prisma.transaction.count({ where: { userId, category: existing.name } }),
+    prisma.budget.count({ where: { userId, category: existing.name } }),
+  ]);
+
+  const usageCount = txCount + budgetCount;
+  if (usageCount > 0) throw new CategoryInUseError(usageCount);
+
+  return prisma.category.delete({ where: { id } });
 }
 
 export async function getMonthlyInsights(userId: number): Promise<MonthlyInsights> {

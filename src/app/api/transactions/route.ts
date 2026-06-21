@@ -1,6 +1,6 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/server/auth";
-import { getTransactions, createTransaction } from "@/server/db";
+import { getTransactions, createTransaction, categoryExists } from "@/server/db";
 import type { FilterState, CreateTransactionInput, TransactionType } from "@/types";
 
 export async function GET(request: Request) {
@@ -37,6 +37,10 @@ export async function POST(request: Request) {
 
     if (!body.amount || !body.type || !body.category || !body.date) {
       return Response.json({ error: "Missing required fields" }, { status: 400 });
+    }
+
+    if (!(await categoryExists(body.category, userId))) {
+      return Response.json({ error: "Unknown category" }, { status: 400 });
     }
 
     const transaction = await createTransaction(body, userId);

@@ -1,7 +1,7 @@
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import { authOptions } from "@/server/auth";
-import { getSummary, getChartData, getMonthlyInsights, getBudgetStatus } from "@/server/db";
+import { getSummary, getChartData, getMonthlyInsights, getBudgetStatus, getCategories } from "@/server/db";
 import { SummaryCards } from "@/components/dashboard/SummaryCards";
 import { ExpensePieChart } from "@/components/dashboard/ExpensePieChart";
 import { BalanceLineChart } from "@/components/dashboard/BalanceLineChart";
@@ -16,12 +16,15 @@ export default async function DashboardPage() {
   const userId = Number(session.user.id);
   const now = new Date();
 
-  const [summary, chartData, insights, budgetStatuses] = await Promise.all([
+  const [summary, chartData, insights, budgetStatuses, categories] = await Promise.all([
     getSummary(userId),
     getChartData(userId),
     getMonthlyInsights(userId),
     getBudgetStatus(userId, now.getFullYear(), now.getMonth() + 1),
+    getCategories(userId),
   ]);
+
+  const categoryColors = Object.fromEntries(categories.map((c) => [c.name, c.color]));
 
   return (
     <div className="flex flex-col gap-6">
@@ -38,7 +41,7 @@ export default async function DashboardPage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <Card title="Expenses by Category">
-          <ExpensePieChart data={chartData.pieData} />
+          <ExpensePieChart data={chartData.pieData} colorMap={categoryColors} />
         </Card>
         <Card title="Balance Over Time">
           <BalanceLineChart data={chartData.lineData} />

@@ -9,9 +9,10 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { formatCurrency } from "@/lib/utils";
+import { DEFAULT_CATEGORY_COLOR } from "@/lib/categories";
 import type { CategoryBreakdown } from "@/types";
 
-const COLORS = [
+const FALLBACK_COLORS = [
   "#6366f1", // indigo
   "#f43f5e", // rose
   "#10b981", // emerald
@@ -24,9 +25,11 @@ const COLORS = [
 
 interface ExpensePieChartProps {
   data: CategoryBreakdown[];
+  /** Maps a category name to its user-defined color. */
+  colorMap?: Record<string, string>;
 }
 
-export function ExpensePieChart({ data }: ExpensePieChartProps) {
+export function ExpensePieChart({ data, colorMap }: ExpensePieChartProps) {
   if (data.length === 0) {
     return (
       <div className="flex items-center justify-center h-64 text-sm text-gray-400">
@@ -48,8 +51,17 @@ export function ExpensePieChart({ data }: ExpensePieChartProps) {
           outerRadius={100}
           paddingAngle={3}
         >
-          {data.map((_, i) => (
-            <Cell key={i} fill={COLORS[i % COLORS.length]} stroke="white" strokeWidth={2} />
+          {data.map((entry, i) => (
+            <Cell
+              key={i}
+              fill={
+                colorMap?.[entry.category] ??
+                FALLBACK_COLORS[i % FALLBACK_COLORS.length] ??
+                DEFAULT_CATEGORY_COLOR
+              }
+              stroke="white"
+              strokeWidth={2}
+            />
           ))}
         </Pie>
         <Tooltip

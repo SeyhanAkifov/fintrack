@@ -76,6 +76,21 @@ export interface UpsertBudgetInput {
   year: number;
 }
 
+export interface Category {
+  id: number;
+  name: string;
+  color: string;
+  icon: string;
+}
+
+export interface CreateCategoryInput {
+  name: string;
+  color: string;
+  icon: string;
+}
+
+export type UpdateCategoryInput = Partial<CreateCategoryInput>;
+
 export interface CategoryInsight {
   category: string;
   thisMonth: number;

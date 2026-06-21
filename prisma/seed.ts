@@ -4,6 +4,7 @@ dotenv.config();
 import { PrismaClient, TransactionType } from "../generated/client";
 import { PrismaBetterSqlite3 } from "@prisma/adapter-better-sqlite3";
 import bcrypt from "bcryptjs";
+import { DEFAULT_CATEGORIES } from "../src/lib/categories";
 
 const adapter = new PrismaBetterSqlite3({
   url: process.env.DATABASE_URL ?? "file:./dev.db",
@@ -76,10 +77,31 @@ const transactions = [
   { amount: 38.50,   type: e, category: "Food",          date: new Date("2026-06-11"), note: "Lunch + coffee this week" },
 ];
 
+// Monthly spending limits per category. June 2026 is the current month and
+// mirrors the seeded spend (Entertainment is intentionally over budget for the
+// demo); May 2026 gives some history for month navigation.
+const budgets = [
+  // ── JUNE 2026 (current month) ──────────────────────────────────────────────
+  { category: "Rent",          limitAmount: 850, month: 6, year: 2026 },
+  { category: "Food",          limitAmount: 300, month: 6, year: 2026 },
+  { category: "Transport",     limitAmount: 100, month: 6, year: 2026 },
+  { category: "Entertainment", limitAmount: 100, month: 6, year: 2026 },
+  { category: "Subscriptions", limitAmount: 60,  month: 6, year: 2026 },
+  { category: "Utilities",     limitAmount: 120, month: 6, year: 2026 },
+  { category: "Health",        limitAmount: 100, month: 6, year: 2026 },
+
+  // ── MAY 2026 (history) ─────────────────────────────────────────────────────
+  { category: "Rent",          limitAmount: 850, month: 5, year: 2026 },
+  { category: "Food",          limitAmount: 250, month: 5, year: 2026 },
+  { category: "Entertainment", limitAmount: 50,  month: 5, year: 2026 },
+];
+
 async function main() {
   console.log("Seeding database…");
 
   await prisma.transaction.deleteMany();
+  await prisma.budget.deleteMany();
+  await prisma.category.deleteMany();
   await prisma.user.deleteMany();
 
   const passwordHash = await bcrypt.hash("demo1234", 12);
@@ -91,8 +113,27 @@ async function main() {
     await prisma.transaction.create({ data: { ...tx, userId: demoUser.id } });
   }
 
+  // Backfill default categories for every user that has none.
+  const users = await prisma.user.findMany({ select: { id: true } });
+  let backfilled = 0;
+  for (const u of users) {
+    const count = await prisma.category.count({ where: { userId: u.id } });
+    if (count === 0) {
+      await prisma.category.createMany({
+        data: DEFAULT_CATEGORIES.map((c) => ({ ...c, userId: u.id })),
+      });
+      backfilled++;
+    }
+  }
+
+  for (const b of budgets) {
+    await prisma.budget.create({ data: { ...b, userId: demoUser.id } });
+  }
+
   console.log(`Created demo user: demo@fintrack.app / demo1234`);
   console.log(`Seeded ${transactions.length} transactions across April–June 2026.`);
+  console.log(`Seeded default categories for ${backfilled} user(s).`);
+  console.log(`Seeded ${budgets.length} budgets (May & June 2026).`);
 }
 
 main()

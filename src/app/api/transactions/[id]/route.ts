@@ -4,6 +4,7 @@ import {
   getTransactionById,
   updateTransaction,
   deleteTransaction,
+  categoryExists,
 } from "@/server/db";
 import type { UpdateTransactionInput } from "@/types";
 
@@ -35,6 +36,11 @@ export async function PUT(request: Request, { params }: Params) {
   try {
     const id = Number(params.id);
     const body = (await request.json()) as UpdateTransactionInput;
+
+    if (body.category && !(await categoryExists(body.category, userId))) {
+      return Response.json({ error: "Unknown category" }, { status: 400 });
+    }
+
     const transaction = await updateTransaction(id, userId, body);
     return Response.json({
       ...transaction,

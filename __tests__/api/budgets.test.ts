@@ -11,6 +11,7 @@ jest.mock("@/server/db", () => ({
   getBudgetStatus: jest.fn(),
   upsertBudget: jest.fn(),
   deleteBudget: jest.fn(),
+  categoryExists: jest.fn().mockResolvedValue(true),
 }));
 
 const { getServerSession } = jest.requireMock("next-auth") as { getServerSession: jest.Mock };

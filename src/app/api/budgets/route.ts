@@ -1,6 +1,6 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/server/auth";
-import { upsertBudget } from "@/server/db";
+import { upsertBudget, categoryExists } from "@/server/db";
 import type { UpsertBudgetInput } from "@/types";
 
 export async function POST(request: Request) {
@@ -13,6 +13,10 @@ export async function POST(request: Request) {
 
     if (!body.category || !body.limitAmount || !body.month || !body.year) {
       return Response.json({ error: "Missing required fields" }, { status: 400 });
+    }
+
+    if (!(await categoryExists(body.category, userId))) {
+      return Response.json({ error: "Unknown category" }, { status: 400 });
     }
 
     const budget = await upsertBudget(body, userId);

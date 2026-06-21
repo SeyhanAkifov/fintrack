@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Select } from "@/components/ui/Select";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
-import { CATEGORIES } from "@/lib/categories";
+import { useCategories } from "@/hooks/useCategories";
 import type { BudgetStatus } from "@/types";
 
 const MONTH_NAMES = [
@@ -29,11 +29,13 @@ export function BudgetForm({
   onSuccess,
   onCancel,
 }: BudgetFormProps) {
+  const { categories } = useCategories();
+  const categoryNames = categories.map((c) => c.name);
   const availableCategories = editing
-    ? CATEGORIES.filter((c) => c === editing.category)
-    : CATEGORIES.filter((c) => !budgetedCategories.includes(c));
+    ? categoryNames.filter((c) => c === editing.category)
+    : categoryNames.filter((c) => !budgetedCategories.includes(c));
 
-  const [category, setCategory] = useState(editing?.category ?? availableCategories[0] ?? "");
+  const [category, setCategory] = useState(editing?.category ?? "");
   const [limitAmount, setLimitAmount] = useState(editing ? String(editing.limit) : "");
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
@@ -78,6 +80,7 @@ export function BudgetForm({
       <Select
         label="Category"
         options={categoryOptions}
+        placeholder="Select a category"
         value={category}
         onChange={(e) => setCategory(e.target.value)}
         disabled={!!editing}

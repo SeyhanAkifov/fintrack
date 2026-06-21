@@ -1,5 +1,6 @@
 import { prisma } from "@/server/prisma";
 import bcrypt from "bcryptjs";
+import { DEFAULT_CATEGORIES } from "@/lib/categories";
 
 export async function POST(request: Request) {
   try {
@@ -39,6 +40,10 @@ export async function POST(request: Request) {
         passwordHash,
         name: body.name ?? null,
       },
+    });
+
+    await prisma.category.createMany({
+      data: DEFAULT_CATEGORIES.map((c) => ({ ...c, userId: user.id })),
     });
 
     return Response.json({ id: user.id, email: user.email }, { status: 201 });
