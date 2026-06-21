@@ -88,6 +88,7 @@ npm test             # Jest (jsdom for components, node env for API routes)
 npm run test:e2e     # Playwright — run `npx playwright install` once to download browsers
 ```
 
+
 ## License
 
 Private / personal project.
