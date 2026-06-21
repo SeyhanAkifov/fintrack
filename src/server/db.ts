@@ -17,6 +17,8 @@ import type {
   UpdateCategoryInput,
   CreateRecurringInput,
   UpdateRecurringInput,
+  ImportRow,
+  ImportResult,
 } from "@/types";
 
 /** Thrown when a category cannot be deleted because transactions/budgets use it. */
@@ -75,6 +77,77 @@ export async function updateTransaction(
 
 export async function deleteTransaction(id: number, userId: number) {
   return prisma.transaction.deleteMany({ where: { id, userId } });
+}
+
+/**
+ * Bulk-import transactions from a CSV. Validates each category against the
+ * user's categories, skips rows that duplicate an existing transaction (or an
+ * earlier row in the same batch), and inserts the rest. Dedup key is
+ * day + amount + type + note.
+ */
+export async function bulkCreateTransactions(
+  rows: ImportRow[],
+  userId: number
+): Promise<ImportResult> {
+  if (rows.length === 0) return { created: 0, skipped: 0, invalid: 0 };
+
+  const cats = new Set(
+    (await prisma.category.findMany({ where: { userId }, select: { name: true } })).map(
+      (c) => c.name
+    )
+  );
+
+  const times = rows.map((r) => new Date(r.date).getTime()).filter((t) => !isNaN(t));
+  const min = new Date(Math.min(...times));
+  const max = new Date(Math.max(...times));
+  const existing = await prisma.transaction.findMany({
+    where: { userId, date: { gte: min, lte: max } },
+    select: { amount: true, type: true, date: true, note: true },
+  });
+
+  const key = (amount: number, type: string, date: Date, note: string | null) =>
+    `${date.toISOString().slice(0, 10)}|${amount}|${type}|${note ?? ""}`;
+
+  const seen = new Set(existing.map((e) => key(e.amount, e.type, e.date, e.note)));
+
+  const toInsert: {
+    amount: number;
+    type: TransactionType;
+    category: string;
+    date: Date;
+    note: string | null;
+    userId: number;
+  }[] = [];
+  let skipped = 0;
+  let invalid = 0;
+
+  for (const r of rows) {
+    const d = new Date(r.date);
+    if (isNaN(d.getTime()) || !cats.has(r.category)) {
+      invalid++;
+      continue;
+    }
+    const k = key(r.amount, r.type, d, r.note ?? "");
+    if (seen.has(k)) {
+      skipped++;
+      continue;
+    }
+    seen.add(k);
+    toInsert.push({
+      amount: r.amount,
+      type: r.type,
+      category: r.category,
+      date: d,
+      note: r.note ?? null,
+      userId,
+    });
+  }
+
+  if (toInsert.length > 0) {
+    await prisma.transaction.createMany({ data: toInsert });
+  }
+
+  return { created: toInsert.length, skipped, invalid };
 }
 
 export async function getSummary(userId: number): Promise<Summary> {

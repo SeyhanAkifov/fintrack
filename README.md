@@ -9,6 +9,7 @@ A personal finance tracker built with **Next.js 14 (App Router)**, **TypeScript*
 - **Budgets** — monthly spending limits per category with progress bars and over-budget alerts.
 - **Custom categories** — create your own categories with a name, color, and icon (built-in icon picker). Renaming cascades to existing data; in-use categories are protected from deletion.
 - **Recurring transactions** — automate rent, salary, subscriptions (weekly/monthly). Due entries post automatically on app load (catch-up generation, no cron needed) and surface in an "Upcoming Payments" widget.
+- **CSV import** — upload a bank statement, map columns (handles `,`/`;` delimiters and US/DE number & date formats), get auto-suggested categories, review, and bulk-import. Duplicate rows are skipped automatically.
 - **Dashboard** — income/expense/balance summary, expenses-by-category pie chart, balance-over-time line chart, month-over-month spending insights, budget health, and upcoming recurring payments.
 - **Responsive** — mobile-friendly navigation with a hamburger menu.
 

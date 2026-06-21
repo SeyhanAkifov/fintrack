@@ -51,6 +51,20 @@ export interface CreateTransactionInput {
 
 export type UpdateTransactionInput = Partial<CreateTransactionInput>;
 
+export interface ImportRow {
+  amount: number;
+  type: TransactionType;
+  category: string;
+  date: string;
+  note?: string | null;
+}
+
+export interface ImportResult {
+  created: number;
+  skipped: number;
+  invalid: number;
+}
+
 export interface Budget {
   id: number;
   category: string;
