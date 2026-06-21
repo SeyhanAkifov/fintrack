@@ -1,6 +1,6 @@
-import type { TransactionType } from "../../generated/enums";
+import type { TransactionType, Frequency } from "../../generated/enums";
 
-export type { TransactionType };
+export type { TransactionType, Frequency };
 
 export interface Transaction {
   id: number;
@@ -90,6 +90,29 @@ export interface CreateCategoryInput {
 }
 
 export type UpdateCategoryInput = Partial<CreateCategoryInput>;
+
+export interface RecurringTransaction {
+  id: number;
+  amount: number;
+  type: TransactionType;
+  category: string;
+  note: string | null;
+  frequency: Frequency;
+  nextRunDate: string;
+  active: boolean;
+}
+
+export interface CreateRecurringInput {
+  amount: number;
+  type: TransactionType;
+  category: string;
+  note?: string | null;
+  frequency: Frequency;
+  nextRunDate: string;
+  active?: boolean;
+}
+
+export type UpdateRecurringInput = Partial<CreateRecurringInput>;
 
 export interface CategoryInsight {
   category: string;

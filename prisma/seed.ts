@@ -96,11 +96,21 @@ const budgets = [
   { category: "Entertainment", limitAmount: 50,  month: 5, year: 2026 },
 ];
 
+// Recurring templates for the demo user. nextRunDate is in early July 2026 so
+// they show up as "upcoming" without immediately generating transactions.
+const recurring = [
+  { amount: 3500.0, type: i, category: "Salary",        frequency: "monthly" as const, nextRunDate: new Date("2026-07-01"), note: "Monthly salary" },
+  { amount: 850.0,  type: e, category: "Rent",          frequency: "monthly" as const, nextRunDate: new Date("2026-07-02"), note: "Monthly rent" },
+  { amount: 14.99,  type: e, category: "Subscriptions", frequency: "monthly" as const, nextRunDate: new Date("2026-07-05"), note: "Netflix" },
+  { amount: 89.99,  type: e, category: "Health",        frequency: "monthly" as const, nextRunDate: new Date("2026-07-08"), note: "Gym membership" },
+];
+
 async function main() {
   console.log("Seeding database…");
 
   await prisma.transaction.deleteMany();
   await prisma.budget.deleteMany();
+  await prisma.recurringTransaction.deleteMany();
   await prisma.category.deleteMany();
   await prisma.user.deleteMany();
 
@@ -130,10 +140,15 @@ async function main() {
     await prisma.budget.create({ data: { ...b, userId: demoUser.id } });
   }
 
+  for (const r of recurring) {
+    await prisma.recurringTransaction.create({ data: { ...r, userId: demoUser.id } });
+  }
+
   console.log(`Created demo user: demo@fintrack.app / demo1234`);
   console.log(`Seeded ${transactions.length} transactions across April–June 2026.`);
   console.log(`Seeded default categories for ${backfilled} user(s).`);
   console.log(`Seeded ${budgets.length} budgets (May & June 2026).`);
+  console.log(`Seeded ${recurring.length} recurring templates.`);
 }
 
 main()

@@ -12,6 +12,11 @@ enum TransactionType {
   expense
 }
 
+enum Frequency {
+  weekly
+  monthly
+}
+
 model User {
   id           Int           @id @default(autoincrement())
   email        String        @unique
@@ -21,6 +26,7 @@ model User {
   transactions Transaction[]
   budgets      Budget[]
   categories   Category[]
+  recurring    RecurringTransaction[]
 }
 
 model Category {
@@ -49,13 +55,28 @@ model Budget {
 }
 
 model Transaction {
-  id        Int             @id @default(autoincrement())
-  amount    Float
-  type      TransactionType
-  category  String
-  date      DateTime
-  note      String?
-  createdAt DateTime        @default(now())
-  userId    Int?
-  user      User?           @relation(fields: [userId], references: [id])
+  id          Int             @id @default(autoincrement())
+  amount      Float
+  type        TransactionType
+  category    String
+  date        DateTime
+  note        String?
+  createdAt   DateTime        @default(now())
+  userId      Int?
+  user        User?           @relation(fields: [userId], references: [id])
+  recurringId Int?
+}
+
+model RecurringTransaction {
+  id          Int             @id @default(autoincrement())
+  userId      Int
+  user        User            @relation(fields: [userId], references: [id])
+  amount      Float
+  type        TransactionType
+  category    String
+  note        String?
+  frequency   Frequency
+  nextRunDate DateTime
+  active      Boolean         @default(true)
+  createdAt   DateTime        @default(now())
 }

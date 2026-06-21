@@ -1,6 +1,6 @@
 import "server-only";
 import { prisma } from "./prisma";
-import { TransactionType } from "../../generated/enums";
+import { TransactionType, Frequency } from "../../generated/enums";
 import type {
   FilterState,
   Summary,
@@ -15,6 +15,8 @@ import type {
   UpsertBudgetInput,
   CreateCategoryInput,
   UpdateCategoryInput,
+  CreateRecurringInput,
+  UpdateRecurringInput,
 } from "@/types";
 
 /** Thrown when a category cannot be deleted because transactions/budgets use it. */
@@ -259,6 +261,129 @@ export async function deleteCategory(id: number, userId: number) {
   if (usageCount > 0) throw new CategoryInUseError(usageCount);
 
   return prisma.category.delete({ where: { id } });
+}
+
+// ── Recurring transactions ──────────────────────────────────────────────────
+
+/** Returns the next due date after `date` for the given frequency. */
+function advanceDate(date: Date, frequency: Frequency): Date {
+  const d = new Date(date);
+  if (frequency === Frequency.weekly) d.setDate(d.getDate() + 7);
+  else d.setMonth(d.getMonth() + 1);
+  return d;
+}
+
+export async function getRecurringTransactions(userId: number) {
+  return prisma.recurringTransaction.findMany({
+    where: { userId },
+    orderBy: [{ active: "desc" }, { nextRunDate: "asc" }],
+  });
+}
+
+export async function getUpcomingRecurring(userId: number, limit = 5) {
+  return prisma.recurringTransaction.findMany({
+    where: { userId, active: true },
+    orderBy: { nextRunDate: "asc" },
+    take: limit,
+  });
+}
+
+export async function createRecurringTransaction(
+  data: CreateRecurringInput,
+  userId: number
+) {
+  return prisma.recurringTransaction.create({
+    data: {
+      amount: data.amount,
+      type: data.type,
+      category: data.category,
+      note: data.note ?? null,
+      frequency: data.frequency,
+      nextRunDate: new Date(data.nextRunDate),
+      active: data.active ?? true,
+      userId,
+    },
+  });
+}
+
+export async function updateRecurringTransaction(
+  id: number,
+  userId: number,
+  data: UpdateRecurringInput
+) {
+  return prisma.recurringTransaction.update({
+    where: { id, userId },
+    data: {
+      ...(data.amount !== undefined ? { amount: data.amount } : {}),
+      ...(data.type !== undefined ? { type: data.type } : {}),
+      ...(data.category !== undefined ? { category: data.category } : {}),
+      ...(data.note !== undefined ? { note: data.note } : {}),
+      ...(data.frequency !== undefined ? { frequency: data.frequency } : {}),
+      ...(data.nextRunDate !== undefined
+        ? { nextRunDate: new Date(data.nextRunDate) }
+        : {}),
+      ...(data.active !== undefined ? { active: data.active } : {}),
+    },
+  });
+}
+
+export async function deleteRecurringTransaction(id: number, userId: number) {
+  return prisma.recurringTransaction.deleteMany({ where: { id, userId } });
+}
+
+/**
+ * Materializes any due recurring templates into real transactions, catching up
+ * every missed occurrence from `nextRunDate` up to today and advancing the
+ * template's `nextRunDate`. Called on page load (no background worker needed).
+ * Returns the number of transactions created.
+ */
+export async function runDueRecurringTransactions(userId: number): Promise<number> {
+  const now = new Date();
+  const due = await prisma.recurringTransaction.findMany({
+    where: { userId, active: true, nextRunDate: { lte: now } },
+  });
+
+  let created = 0;
+  for (const r of due) {
+    let next = new Date(r.nextRunDate);
+    const rows: {
+      amount: number;
+      type: TransactionType;
+      category: string;
+      date: Date;
+      note: string | null;
+      userId: number;
+      recurringId: number;
+    }[] = [];
+
+    let guard = 0;
+    while (next <= now && guard < 1000) {
+      rows.push({
+        amount: r.amount,
+        type: r.type,
+        category: r.category,
+        date: new Date(next),
+        note: r.note,
+        userId,
+        recurringId: r.id,
+      });
+      next = advanceDate(next, r.frequency);
+      guard++;
+    }
+
+    if (rows.length > 0) {
+      await prisma.$transaction([
+        prisma.transaction.createMany({ data: rows }),
+        prisma.recurringTransaction.update({
+          where: { id: r.id },
+          data: { nextRunDate: next },
+        }),
+      ]);
+      created += rows.length;
+    }
+  }
+
+  return created;
 }
 
 export async function getMonthlyInsights(userId: number): Promise<MonthlyInsights> {

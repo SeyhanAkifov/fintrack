@@ -1,7 +1,7 @@
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import { authOptions } from "@/server/auth";
-import { getTransactions } from "@/server/db";
+import { getTransactions, runDueRecurringTransactions } from "@/server/db";
 import { TransactionList } from "@/components/transactions/TransactionList";
 import type { Transaction } from "@/types";
 
@@ -10,6 +10,7 @@ export default async function TransactionsPage() {
   if (!session) redirect("/signin");
 
   const userId = Number(session.user.id);
+  await runDueRecurringTransactions(userId);
   const raw = await getTransactions({}, userId);
   const transactions: Transaction[] = raw.map((t) => ({
     ...t,
