@@ -81,7 +81,6 @@ npx tsx prisma/seed.ts   # Seed/reset the database
 
 > Always run `npx prisma generate` after editing `prisma/schema.prisma`. The generated client lives in `generated/` (gitignored) — not in `node_modules`.
 
-
 ## Testing
 
 ```bash
