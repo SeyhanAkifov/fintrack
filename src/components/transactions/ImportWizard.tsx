@@ -165,13 +165,13 @@ export function ImportWizard() {
   // ── Result screen ──────────────────────────────────────────────────────────
   if (result) {
     return (
-      <div className="bg-white/70 backdrop-blur rounded-2xl border border-white shadow-sm p-8 flex flex-col items-center gap-4 text-center">
+      <div className="bg-white/70 dark:bg-gray-800/60 backdrop-blur rounded-2xl border border-white dark:border-gray-700 shadow-sm p-8 flex flex-col items-center gap-4 text-center">
         <span className="flex items-center justify-center w-12 h-12 rounded-full bg-emerald-100 text-emerald-600 text-2xl">
           ✓
         </span>
         <div>
-          <p className="text-lg font-semibold text-gray-900">Import complete</p>
-          <p className="text-sm text-gray-500 mt-1">
+          <p className="text-lg font-semibold text-gray-900 dark:text-gray-100">Import complete</p>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
             {result.created} imported
             {result.skipped > 0 && ` · ${result.skipped} duplicates skipped`}
             {result.invalid > 0 && ` · ${result.invalid} invalid skipped`}
@@ -199,23 +199,23 @@ export function ImportWizard() {
   return (
     <div className="flex flex-col gap-4">
       {/* Upload */}
-      <div className="bg-white/70 backdrop-blur rounded-2xl border border-white shadow-sm px-5 py-4">
-        <label className="text-sm font-medium text-gray-700">CSV file</label>
+      <div className="bg-white/70 dark:bg-gray-800/60 backdrop-blur rounded-2xl border border-white dark:border-gray-700 shadow-sm px-5 py-4">
+        <label className="text-sm font-medium text-gray-700 dark:text-gray-300">CSV file</label>
         <div className="flex items-center gap-3 mt-2">
           <input
             type="file"
             accept=".csv,text/csv"
             onChange={handleFile}
-            className="block text-sm text-gray-600 file:mr-3 file:rounded-lg file:border-0 file:bg-indigo-50 file:px-4 file:py-2 file:text-sm file:font-medium file:text-indigo-700 hover:file:bg-indigo-100"
+            className="block text-sm text-gray-600 dark:text-gray-300 file:mr-3 file:rounded-lg file:border-0 file:bg-indigo-50 file:px-4 file:py-2 file:text-sm file:font-medium file:text-indigo-700 hover:file:bg-indigo-100"
           />
-          {fileName && <span className="text-xs text-gray-400 truncate">{fileName}</span>}
+          {fileName && <span className="text-xs text-gray-400 dark:text-gray-500 truncate">{fileName}</span>}
         </div>
       </div>
 
       {rawRows.length > 0 && (
         <>
           {/* Mapping controls */}
-          <div className="bg-white/70 backdrop-blur rounded-2xl border border-white shadow-sm px-5 py-4 flex flex-col gap-4">
+          <div className="bg-white/70 dark:bg-gray-800/60 backdrop-blur rounded-2xl border border-white dark:border-gray-700 shadow-sm px-5 py-4 flex flex-col gap-4">
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               <Select label="Date column" options={columnOptions} value={String(dateCol)} onChange={(e) => setDateCol(Number(e.target.value))} />
               <Select label="Amount column" options={columnOptions} value={String(amountCol)} onChange={(e) => setAmountCol(Number(e.target.value))} />
@@ -233,16 +233,16 @@ export function ImportWizard() {
                 onChange={(e) => setNegativeIsExpense(e.target.value === "neg")}
               />
             </div>
-            <label className="flex items-center gap-2 text-sm text-gray-700">
+            <label className="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
               <input type="checkbox" checked={hasHeader} onChange={(e) => setHasHeader(e.target.checked)} className="rounded border-gray-300" />
               First row is a header
             </label>
           </div>
 
           {/* Summary + import */}
-          <div className="flex flex-wrap items-center justify-between gap-3 bg-white/70 backdrop-blur rounded-2xl border border-white shadow-sm px-5 py-3.5">
-            <span className="text-sm text-gray-500">
-              {dataRows.length} rows · {validCount} valid · <span className="font-semibold text-gray-800">{includeCount} to import</span>
+          <div className="flex flex-wrap items-center justify-between gap-3 bg-white/70 dark:bg-gray-800/60 backdrop-blur rounded-2xl border border-white dark:border-gray-700 shadow-sm px-5 py-3.5">
+            <span className="text-sm text-gray-500 dark:text-gray-400">
+              {dataRows.length} rows · {validCount} valid · <span className="font-semibold text-gray-800 dark:text-gray-200">{includeCount} to import</span>
             </span>
             <Button variant="primary" onClick={handleImport} disabled={submitting || includeCount === 0}>
               {submitting ? "Importing…" : `Import ${includeCount}`}
@@ -254,10 +254,10 @@ export function ImportWizard() {
           )}
 
           {/* Preview table */}
-          <div className="bg-white/70 backdrop-blur rounded-2xl border border-white shadow-sm overflow-x-auto">
+          <div className="bg-white/70 dark:bg-gray-800/60 backdrop-blur rounded-2xl border border-white dark:border-gray-700 shadow-sm overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="text-left text-xs text-gray-400 border-b border-gray-100">
+                <tr className="text-left text-xs text-gray-400 dark:text-gray-500 border-b border-gray-100 dark:border-gray-700">
                   <th className="px-3 py-2 w-10"></th>
                   <th className="px-3 py-2">Date</th>
                   <th className="px-3 py-2">Description</th>
@@ -265,7 +265,7 @@ export function ImportWizard() {
                   <th className="px-3 py-2 text-right">Amount</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-50">
+              <tbody className="divide-y divide-gray-50 dark:divide-gray-700/50">
                 {preview.slice(0, 200).map((p) => (
                   <tr key={p.idx} className={!p.valid ? "opacity-40" : !p.included ? "opacity-50" : ""}>
                     <td className="px-3 py-2">
@@ -277,10 +277,10 @@ export function ImportWizard() {
                         className="rounded border-gray-300"
                       />
                     </td>
-                    <td className="px-3 py-2 whitespace-nowrap text-gray-700">
+                    <td className="px-3 py-2 whitespace-nowrap text-gray-700 dark:text-gray-300">
                       {p.date ? p.date.toLocaleDateString("en-GB") : <span className="text-rose-500">invalid</span>}
                     </td>
-                    <td className="px-3 py-2 max-w-[200px] truncate text-gray-700" title={p.note}>{p.note || "—"}</td>
+                    <td className="px-3 py-2 max-w-[200px] truncate text-gray-700 dark:text-gray-300" title={p.note}>{p.note || "—"}</td>
                     <td className="px-3 py-2">
                       <Select
                         options={categoryNames.map((c) => ({ value: c, label: c }))}
@@ -289,7 +289,7 @@ export function ImportWizard() {
                         className="!py-1 text-xs min-w-[120px]"
                       />
                     </td>
-                    <td className={"px-3 py-2 text-right whitespace-nowrap font-medium " + (p.type === "income" ? "text-emerald-600" : "text-gray-700")}>
+                    <td className={"px-3 py-2 text-right whitespace-nowrap font-medium " + (p.type === "income" ? "text-emerald-600" : "text-gray-700 dark:text-gray-300")}>
                       {p.amount !== null ? (p.type === "income" ? "+" : "−") + formatCurrency(p.amount) : <span className="text-rose-500">—</span>}
                     </td>
                   </tr>
@@ -297,7 +297,7 @@ export function ImportWizard() {
               </tbody>
             </table>
             {preview.length > 200 && (
-              <p className="text-xs text-gray-400 text-center py-3">
+              <p className="text-xs text-gray-400 dark:text-gray-500 text-center py-3">
                 Showing first 200 of {preview.length} rows — all valid rows will be imported.
               </p>
             )}

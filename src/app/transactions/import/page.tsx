@@ -17,8 +17,8 @@ export default async function ImportPage() {
           </svg>
           Back to transactions
         </Link>
-        <h1 className="text-2xl font-bold text-gray-900">Import CSV</h1>
-        <p className="text-sm text-gray-500 mt-1">
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Import CSV</h1>
+        <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
           Upload a bank statement, map the columns, review, and import. Duplicates are skipped automatically.
         </p>
       </div>

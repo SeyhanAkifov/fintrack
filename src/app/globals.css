@@ -1,5 +1,8 @@
 @import "tailwindcss";
 
+/* Enable class-based dark mode (toggled via a `.dark` class on <html>). */
+@custom-variant dark (&:where(.dark, .dark *));
+
 * {
   box-sizing: border-box;
 }
@@ -7,4 +10,9 @@
 body {
   background: linear-gradient(135deg, #f0f4ff 0%, #faf5ff 50%, #f0fdf4 100%);
   min-height: 100vh;
+}
+
+.dark body {
+  background: linear-gradient(135deg, #0b1220 0%, #161226 50%, #0b1a16 100%);
+  color: #e5e7eb;
 }

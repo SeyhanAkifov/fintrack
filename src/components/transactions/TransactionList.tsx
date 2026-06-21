@@ -46,7 +46,7 @@ export function TransactionList({ initialTransactions }: TransactionListProps) {
   return (
     <div className="flex flex-col gap-4">
       {/* Filter bar */}
-      <div className="flex flex-wrap items-center justify-between gap-3 bg-white/70 backdrop-blur rounded-2xl border border-white shadow-sm px-5 py-3.5">
+      <div className="flex flex-wrap items-center justify-between gap-3 bg-white/70 dark:bg-gray-800/60 backdrop-blur rounded-2xl border border-white dark:border-gray-700 shadow-sm px-5 py-3.5">
         <TransactionFilters filters={filters} onFilterChange={setFilters} />
         <div className="flex items-center gap-2">
           <Link href="/transactions/import">
@@ -71,9 +71,9 @@ export function TransactionList({ initialTransactions }: TransactionListProps) {
       </div>
 
       {/* List */}
-      <div className="bg-white/70 backdrop-blur rounded-2xl border border-white shadow-sm overflow-hidden">
+      <div className="bg-white/70 dark:bg-gray-800/60 backdrop-blur rounded-2xl border border-white dark:border-gray-700 shadow-sm overflow-hidden">
         {isLoading && displayed.length === 0 ? (
-          <div className="flex items-center justify-center py-16 text-sm text-gray-400">
+          <div className="flex items-center justify-center py-16 text-sm text-gray-400 dark:text-gray-500">
             Loading…
           </div>
         ) : displayed.length === 0 ? (
@@ -81,10 +81,10 @@ export function TransactionList({ initialTransactions }: TransactionListProps) {
             <svg className="w-10 h-10 text-gray-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
             </svg>
-            <p className="text-sm text-gray-400">No transactions found.</p>
+            <p className="text-sm text-gray-400 dark:text-gray-500">No transactions found.</p>
           </div>
         ) : (
-          <div className="divide-y divide-gray-50">
+          <div className="divide-y divide-gray-50 dark:divide-gray-700/50">
             {displayed.map((t) => (
               <TransactionRow
                 key={t.id}

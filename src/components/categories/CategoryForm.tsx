@@ -64,7 +64,7 @@ export function CategoryForm({ editing, onSuccess, onCancel }: CategoryFormProps
         >
           {icon}
         </span>
-        <span className="flex items-center gap-2 text-sm font-medium text-gray-800">
+        <span className="flex items-center gap-2 text-sm font-medium text-gray-800 dark:text-gray-200">
           <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: color }} />
           {name.trim() || "New category"}
         </span>
@@ -80,7 +80,7 @@ export function CategoryForm({ editing, onSuccess, onCancel }: CategoryFormProps
       <IconPicker value={icon} onChange={setIcon} />
 
       <div className="flex flex-col gap-1">
-        <label htmlFor="cat-color" className="text-sm font-medium text-gray-700">
+        <label htmlFor="cat-color" className="text-sm font-medium text-gray-700 dark:text-gray-300">
           Color
         </label>
         <div className="flex items-center gap-3">
@@ -91,7 +91,7 @@ export function CategoryForm({ editing, onSuccess, onCancel }: CategoryFormProps
             onChange={(e) => setColor(e.target.value)}
             className="h-10 w-16 rounded-lg border border-gray-300 cursor-pointer bg-white p-1"
           />
-          <span className="text-sm text-gray-500 tabular-nums">{color}</span>
+          <span className="text-sm text-gray-500 dark:text-gray-400 tabular-nums">{color}</span>
         </div>
       </div>
 

@@ -1,4 +1,5 @@
 import "server-only";
+import bcrypt from "bcryptjs";
 import { prisma } from "./prisma";
 import { TransactionType, Frequency } from "../../generated/enums";
 import type {
@@ -27,6 +28,41 @@ export class CategoryInUseError extends Error {
     super("Category is in use");
     this.name = "CategoryInUseError";
   }
+}
+
+/** Thrown when the current password does not match during a password change. */
+export class InvalidPasswordError extends Error {
+  constructor() {
+    super("Current password is incorrect");
+    this.name = "InvalidPasswordError";
+  }
+}
+
+export async function getUserById(userId: number) {
+  return prisma.user.findUniqueOrThrow({
+    where: { id: userId },
+    select: { id: true, email: true, name: true, createdAt: true },
+  });
+}
+
+export async function updateUserName(userId: number, name: string) {
+  return prisma.user.update({
+    where: { id: userId },
+    data: { name: name.trim() || null },
+    select: { id: true, email: true, name: true },
+  });
+}
+
+export async function changeUserPassword(
+  userId: number,
+  currentPassword: string,
+  newPassword: string
+) {
+  const user = await prisma.user.findUniqueOrThrow({ where: { id: userId } });
+  const ok = await bcrypt.compare(currentPassword, user.passwordHash);
+  if (!ok) throw new InvalidPasswordError();
+  const passwordHash = await bcrypt.hash(newPassword, 12);
+  await prisma.user.update({ where: { id: userId }, data: { passwordHash } });
 }
 
 export async function getTransactions(filters: FilterState = {}, userId: number) {

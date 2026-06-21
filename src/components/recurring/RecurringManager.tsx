@@ -55,8 +55,8 @@ export function RecurringManager({ initialRecurring }: RecurringManagerProps) {
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex flex-wrap items-center justify-between gap-3 bg-white/70 backdrop-blur rounded-2xl border border-white shadow-sm px-5 py-3.5">
-        <span className="text-sm text-gray-500">
+      <div className="flex flex-wrap items-center justify-between gap-3 bg-white/70 dark:bg-gray-800/60 backdrop-blur rounded-2xl border border-white dark:border-gray-700 shadow-sm px-5 py-3.5">
+        <span className="text-sm text-gray-500 dark:text-gray-400">
           {displayed.length} recurring transaction{displayed.length === 1 ? "" : "s"}
         </span>
         <Button
@@ -71,40 +71,40 @@ export function RecurringManager({ initialRecurring }: RecurringManagerProps) {
         </Button>
       </div>
 
-      <div className="bg-white/70 backdrop-blur rounded-2xl border border-white shadow-sm overflow-hidden">
+      <div className="bg-white/70 dark:bg-gray-800/60 backdrop-blur rounded-2xl border border-white dark:border-gray-700 shadow-sm overflow-hidden">
         {displayed.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-16 gap-2 text-center px-4">
             <svg className="w-10 h-10 text-gray-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
             </svg>
-            <p className="text-sm font-medium text-gray-500">No recurring transactions yet.</p>
-            <p className="text-xs text-gray-400">Automate rent, salary, subscriptions and more.</p>
+            <p className="text-sm font-medium text-gray-500 dark:text-gray-400">No recurring transactions yet.</p>
+            <p className="text-xs text-gray-400 dark:text-gray-500">Automate rent, salary, subscriptions and more.</p>
           </div>
         ) : (
-          <div className="divide-y divide-gray-50">
+          <div className="divide-y divide-gray-50 dark:divide-gray-700/50">
             {displayed.map((r) => {
               const icon = byName.get(r.category)?.icon ?? "🔁";
               return (
                 <div
                   key={r.id}
                   className={cn(
-                    "flex items-center gap-3 px-5 py-4 hover:bg-gray-50/60 transition-colors group",
+                    "flex items-center gap-3 px-5 py-4 hover:bg-gray-50/60 dark:hover:bg-gray-700/40 transition-colors group",
                     !r.active && "opacity-50"
                   )}
                 >
                   <span className="text-xl w-7 text-center shrink-0">{icon}</span>
                   <div className="min-w-0 flex-1">
-                    <p className="text-sm font-medium text-gray-800 truncate">
+                    <p className="text-sm font-medium text-gray-800 dark:text-gray-200 truncate">
                       {r.note?.trim() || r.category}
                     </p>
-                    <p className="text-xs text-gray-400">
+                    <p className="text-xs text-gray-400 dark:text-gray-500">
                       {r.category} · {r.frequency === "weekly" ? "Weekly" : "Monthly"} · next {formatDate(r.nextRunDate)}
                     </p>
                   </div>
                   <span
                     className={cn(
                       "text-sm font-semibold tabular-nums shrink-0",
-                      r.type === "income" ? "text-emerald-600" : "text-gray-700"
+                      r.type === "income" ? "text-emerald-600" : "text-gray-700 dark:text-gray-300"
                     )}
                   >
                     {r.type === "income" ? "+" : "−"}
@@ -114,7 +114,7 @@ export function RecurringManager({ initialRecurring }: RecurringManagerProps) {
                   <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                     <button
                       onClick={() => toggleActive(r)}
-                      className="p-1.5 rounded-lg text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 transition-colors"
+                      className="p-1.5 rounded-lg text-gray-400 dark:text-gray-500 hover:text-indigo-600 hover:bg-indigo-50 transition-colors"
                       aria-label={r.active ? "Pause" : "Resume"}
                       title={r.active ? "Pause" : "Resume"}
                     >
@@ -131,7 +131,7 @@ export function RecurringManager({ initialRecurring }: RecurringManagerProps) {
                     </button>
                     <button
                       onClick={() => { setEditing(r); setFormOpen(true); }}
-                      className="p-1.5 rounded-lg text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 transition-colors"
+                      className="p-1.5 rounded-lg text-gray-400 dark:text-gray-500 hover:text-indigo-600 hover:bg-indigo-50 transition-colors"
                       aria-label="Edit"
                     >
                       <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -140,7 +140,7 @@ export function RecurringManager({ initialRecurring }: RecurringManagerProps) {
                     </button>
                     <button
                       onClick={() => setDeleteId(r.id)}
-                      className="p-1.5 rounded-lg text-gray-400 hover:text-rose-600 hover:bg-rose-50 transition-colors"
+                      className="p-1.5 rounded-lg text-gray-400 dark:text-gray-500 hover:text-rose-600 hover:bg-rose-50 transition-colors"
                       aria-label="Delete"
                     >
                       <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>

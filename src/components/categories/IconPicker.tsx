@@ -23,7 +23,7 @@ interface IconPickerProps {
 export function IconPicker({ value, onChange, label = "Icon" }: IconPickerProps) {
   return (
     <div className="flex flex-col gap-1.5">
-      <label className="text-sm font-medium text-gray-700">{label}</label>
+      <label className="text-sm font-medium text-gray-700 dark:text-gray-300">{label}</label>
       <div className="grid grid-cols-8 gap-1 max-h-44 overflow-y-auto rounded-lg border border-gray-300 p-2">
         {CATEGORY_ICONS.map((icon, i) => (
           <button
@@ -36,7 +36,7 @@ export function IconPicker({ value, onChange, label = "Icon" }: IconPickerProps)
               "flex items-center justify-center aspect-square rounded-md text-lg transition-colors",
               value === icon
                 ? "bg-indigo-100 ring-2 ring-indigo-500"
-                : "hover:bg-gray-100"
+                : "hover:bg-gray-100 dark:hover:bg-gray-700"
             )}
           >
             {icon}

@@ -73,7 +73,7 @@ export function BudgetForm({
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-      <p className="text-sm text-gray-500">
+      <p className="text-sm text-gray-500 dark:text-gray-400">
         {MONTH_NAMES[month - 1]} {year}
       </p>
 

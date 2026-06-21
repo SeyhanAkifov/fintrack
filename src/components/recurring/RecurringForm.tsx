@@ -147,8 +147,8 @@ export function RecurringForm({ editing, onSuccess, onCancel }: RecurringFormPro
       />
 
       <div className="flex flex-col gap-1">
-        <label htmlFor="rec-note" className="text-sm font-medium text-gray-700">
-          Note <span className="text-gray-400 font-normal">(optional)</span>
+        <label htmlFor="rec-note" className="text-sm font-medium text-gray-700 dark:text-gray-300">
+          Note <span className="text-gray-400 dark:text-gray-500 font-normal">(optional)</span>
         </label>
         <textarea
           id="rec-note"
@@ -156,7 +156,7 @@ export function RecurringForm({ editing, onSuccess, onCancel }: RecurringFormPro
           value={note}
           onChange={(e) => setNote(e.target.value)}
           placeholder="e.g. Netflix subscription"
-          className="block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 resize-none"
+          className="block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 resize-none dark:border-gray-600 dark:bg-gray-900 dark:text-gray-100 dark:placeholder:text-gray-500"
         />
       </div>
 

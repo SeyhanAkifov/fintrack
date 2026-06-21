@@ -14,7 +14,7 @@ export function TransactionRow({ transaction, onEdit, onDelete }: TransactionRow
   const isIncome = transaction.type === "income";
 
   return (
-    <div className="flex items-center gap-4 px-5 py-3.5 hover:bg-gray-50/60 transition-colors group">
+    <div className="flex items-center gap-4 px-5 py-3.5 hover:bg-gray-50/60 dark:hover:bg-gray-700/40 transition-colors group">
       {/* Icon */}
       <div className={`flex items-center justify-center w-9 h-9 rounded-xl shrink-0 ${
         isIncome
@@ -35,7 +35,7 @@ export function TransactionRow({ transaction, onEdit, onDelete }: TransactionRow
       {/* Info */}
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2">
-          <span className="font-medium text-sm text-gray-900">{transaction.category}</span>
+          <span className="font-medium text-sm text-gray-900 dark:text-gray-100">{transaction.category}</span>
           <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${
             isIncome ? "bg-emerald-50 text-emerald-600" : "bg-rose-50 text-rose-500"
           }`}>
@@ -43,12 +43,12 @@ export function TransactionRow({ transaction, onEdit, onDelete }: TransactionRow
           </span>
         </div>
         {transaction.note && (
-          <p className="text-xs text-gray-400 truncate mt-0.5">{transaction.note}</p>
+          <p className="text-xs text-gray-400 dark:text-gray-500 truncate mt-0.5">{transaction.note}</p>
         )}
       </div>
 
       {/* Date */}
-      <span className="hidden sm:block text-xs text-gray-400 shrink-0">
+      <span className="hidden sm:block text-xs text-gray-400 dark:text-gray-500 shrink-0">
         {formatDate(transaction.date)}
       </span>
 
@@ -63,7 +63,7 @@ export function TransactionRow({ transaction, onEdit, onDelete }: TransactionRow
       <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
         <button
           onClick={() => onEdit(transaction)}
-          className="p-1.5 rounded-lg text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 transition-colors"
+          className="p-1.5 rounded-lg text-gray-400 dark:text-gray-500 hover:text-indigo-600 hover:bg-indigo-50 transition-colors"
           aria-label="Edit"
         >
           <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -72,7 +72,7 @@ export function TransactionRow({ transaction, onEdit, onDelete }: TransactionRow
         </button>
         <button
           onClick={() => onDelete(transaction.id)}
-          className="p-1.5 rounded-lg text-gray-400 hover:text-rose-600 hover:bg-rose-50 transition-colors"
+          className="p-1.5 rounded-lg text-gray-400 dark:text-gray-500 hover:text-rose-600 hover:bg-rose-50 transition-colors"
           aria-label="Delete"
         >
           <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>

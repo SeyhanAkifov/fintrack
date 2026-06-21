@@ -12,7 +12,7 @@ interface DeleteConfirmModalProps {
 export function DeleteConfirmModal({ isOpen, onConfirm, onCancel }: DeleteConfirmModalProps) {
   return (
     <Modal isOpen={isOpen} onClose={onCancel} title="Delete Transaction">
-      <p className="text-sm text-gray-600 mb-6">
+      <p className="text-sm text-gray-600 dark:text-gray-300 mb-6">
         Are you sure you want to delete this transaction? This action cannot be undone.
       </p>
       <div className="flex justify-end gap-3">

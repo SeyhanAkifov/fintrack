@@ -76,24 +76,24 @@ export function BudgetPlanner({ initialStatuses, initialYear, initialMonth }: Bu
   return (
     <div className="flex flex-col gap-4">
       {/* Header bar */}
-      <div className="flex flex-wrap items-center justify-between gap-3 bg-white/70 backdrop-blur rounded-2xl border border-white shadow-sm px-5 py-3.5">
+      <div className="flex flex-wrap items-center justify-between gap-3 bg-white/70 dark:bg-gray-800/60 backdrop-blur rounded-2xl border border-white dark:border-gray-700 shadow-sm px-5 py-3.5">
         {/* Month navigator */}
         <div className="flex items-center gap-2">
           <button
             onClick={prevMonth}
-            className="p-1.5 rounded-lg text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 transition-colors"
+            className="p-1.5 rounded-lg text-gray-400 dark:text-gray-500 hover:text-indigo-600 hover:bg-indigo-50 transition-colors"
             aria-label="Previous month"
           >
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
             </svg>
           </button>
-          <span className="text-sm font-semibold text-gray-800 min-w-[120px] text-center">
+          <span className="text-sm font-semibold text-gray-800 dark:text-gray-200 min-w-[120px] text-center">
             {MONTH_NAMES[month - 1]} {year}
           </span>
           <button
             onClick={nextMonth}
-            className="p-1.5 rounded-lg text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 transition-colors"
+            className="p-1.5 rounded-lg text-gray-400 dark:text-gray-500 hover:text-indigo-600 hover:bg-indigo-50 transition-colors"
             aria-label="Next month"
           >
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -125,9 +125,9 @@ export function BudgetPlanner({ initialStatuses, initialYear, initialMonth }: Bu
       </div>
 
       {/* Budget list */}
-      <div className="bg-white/70 backdrop-blur rounded-2xl border border-white shadow-sm overflow-hidden">
+      <div className="bg-white/70 dark:bg-gray-800/60 backdrop-blur rounded-2xl border border-white dark:border-gray-700 shadow-sm overflow-hidden">
         {isLoading && displayed.length === 0 ? (
-          <div className="flex items-center justify-center py-16 text-sm text-gray-400">
+          <div className="flex items-center justify-center py-16 text-sm text-gray-400 dark:text-gray-500">
             Loading…
           </div>
         ) : displayed.length === 0 ? (
@@ -136,12 +136,12 @@ export function BudgetPlanner({ initialStatuses, initialYear, initialMonth }: Bu
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 11h.01M12 11h.01M15 11h.01M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0 1.1.9 2-2 2z" />
             </svg>
             <div className="text-center">
-              <p className="text-sm font-medium text-gray-500">No budgets for this month.</p>
-              <p className="text-xs text-gray-400 mt-1">Click &ldquo;Add Budget&rdquo; to set a spending limit.</p>
+              <p className="text-sm font-medium text-gray-500 dark:text-gray-400">No budgets for this month.</p>
+              <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">Click &ldquo;Add Budget&rdquo; to set a spending limit.</p>
             </div>
           </div>
         ) : (
-          <div className="divide-y divide-gray-50">
+          <div className="divide-y divide-gray-50 dark:divide-gray-700/50">
             {displayed.map((status) => (
               <BudgetRow
                 key={status.id}
@@ -196,17 +196,17 @@ function BudgetRow({ status, color: dotColor, onEdit, onDelete }: BudgetRowProps
   const color = barColor(status.percentUsed);
 
   return (
-    <div className="flex items-center gap-4 px-5 py-4 hover:bg-gray-50/60 transition-colors group">
+    <div className="flex items-center gap-4 px-5 py-4 hover:bg-gray-50/60 dark:hover:bg-gray-700/40 transition-colors group">
       {/* Category dot + name */}
       <div className="flex items-center gap-2.5 w-32 shrink-0">
         <span className="w-2.5 h-2.5 rounded-full shrink-0" style={{ backgroundColor: dotColor }} />
-        <span className="text-sm font-medium text-gray-800 truncate">{status.category}</span>
+        <span className="text-sm font-medium text-gray-800 dark:text-gray-200 truncate">{status.category}</span>
       </div>
 
       {/* Progress bar + amounts */}
       <div className="flex-1 min-w-0">
         <div className="flex items-center justify-between mb-1.5 gap-2">
-          <span className="text-xs text-gray-500">
+          <span className="text-xs text-gray-500 dark:text-gray-400">
             {formatCurrency(status.spent)} spent
           </span>
           <div className="flex items-center gap-1.5">
@@ -215,12 +215,12 @@ function BudgetRow({ status, color: dotColor, onEdit, onDelete }: BudgetRowProps
                 Over budget
               </span>
             )}
-            <span className="text-xs text-gray-400">
+            <span className="text-xs text-gray-400 dark:text-gray-500">
               of {formatCurrency(status.limit)}
             </span>
           </div>
         </div>
-        <div className="w-full bg-gray-100 rounded-full h-2">
+        <div className="w-full bg-gray-100 dark:bg-gray-700 rounded-full h-2">
           <div
             className={cn("h-2 rounded-full transition-all", color)}
             style={{ width: `${pct}%` }}
@@ -228,7 +228,7 @@ function BudgetRow({ status, color: dotColor, onEdit, onDelete }: BudgetRowProps
         </div>
         <p className={cn(
           "text-xs mt-1",
-          status.isOverBudget ? "text-rose-500 font-medium" : "text-gray-400"
+          status.isOverBudget ? "text-rose-500 font-medium" : "text-gray-400 dark:text-gray-500"
         )}>
           {status.isOverBudget
             ? `${formatCurrency(Math.abs(status.remaining))} over limit`
@@ -239,7 +239,7 @@ function BudgetRow({ status, color: dotColor, onEdit, onDelete }: BudgetRowProps
       {/* Percent */}
       <span className={cn(
         "text-sm font-bold tabular-nums w-12 text-right shrink-0",
-        status.isOverBudget ? "text-rose-500" : "text-gray-600"
+        status.isOverBudget ? "text-rose-500" : "text-gray-600 dark:text-gray-300"
       )}>
         {Math.round(status.percentUsed)}%
       </span>
@@ -248,7 +248,7 @@ function BudgetRow({ status, color: dotColor, onEdit, onDelete }: BudgetRowProps
       <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
         <button
           onClick={() => onEdit(status)}
-          className="p-1.5 rounded-lg text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 transition-colors"
+          className="p-1.5 rounded-lg text-gray-400 dark:text-gray-500 hover:text-indigo-600 hover:bg-indigo-50 transition-colors"
           aria-label="Edit budget"
         >
           <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -257,7 +257,7 @@ function BudgetRow({ status, color: dotColor, onEdit, onDelete }: BudgetRowProps
         </button>
         <button
           onClick={() => onDelete(status.id)}
-          className="p-1.5 rounded-lg text-gray-400 hover:text-rose-600 hover:bg-rose-50 transition-colors"
+          className="p-1.5 rounded-lg text-gray-400 dark:text-gray-500 hover:text-rose-600 hover:bg-rose-50 transition-colors"
           aria-label="Delete budget"
         >
           <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>

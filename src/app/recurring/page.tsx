@@ -26,8 +26,8 @@ export default async function RecurringPage() {
   return (
     <div className="flex flex-col gap-6">
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">Recurring</h1>
-        <p className="text-sm text-gray-500 mt-1">
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Recurring</h1>
+        <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
           Automate repeating income and expenses — they post automatically when due.
         </p>
       </div>

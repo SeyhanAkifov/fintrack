@@ -46,8 +46,8 @@ export function CategoriesManager({ initialCategories }: CategoriesManagerProps)
   return (
     <div className="flex flex-col gap-4">
       {/* Header bar */}
-      <div className="flex flex-wrap items-center justify-between gap-3 bg-white/70 backdrop-blur rounded-2xl border border-white shadow-sm px-5 py-3.5">
-        <span className="text-sm text-gray-500">
+      <div className="flex flex-wrap items-center justify-between gap-3 bg-white/70 dark:bg-gray-800/60 backdrop-blur rounded-2xl border border-white dark:border-gray-700 shadow-sm px-5 py-3.5">
+        <span className="text-sm text-gray-500 dark:text-gray-400">
           {categories.length} categor{categories.length === 1 ? "y" : "ies"}
         </span>
         <Button
@@ -69,30 +69,30 @@ export function CategoriesManager({ initialCategories }: CategoriesManagerProps)
       )}
 
       {/* Category list */}
-      <div className="bg-white/70 backdrop-blur rounded-2xl border border-white shadow-sm overflow-hidden">
+      <div className="bg-white/70 dark:bg-gray-800/60 backdrop-blur rounded-2xl border border-white dark:border-gray-700 shadow-sm overflow-hidden">
         {categories.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-16 gap-2">
-            <p className="text-sm text-gray-400">No categories yet.</p>
+            <p className="text-sm text-gray-400 dark:text-gray-500">No categories yet.</p>
           </div>
         ) : (
-          <div className="divide-y divide-gray-50">
+          <div className="divide-y divide-gray-50 dark:divide-gray-700/50">
             {categories.map((cat) => (
               <div
                 key={cat.id}
-                className="flex items-center gap-4 px-5 py-4 hover:bg-gray-50/60 transition-colors group"
+                className="flex items-center gap-4 px-5 py-4 hover:bg-gray-50/60 dark:hover:bg-gray-700/40 transition-colors group"
               >
                 <span className="text-xl w-7 text-center shrink-0">{cat.icon}</span>
                 <span
                   className="w-3.5 h-3.5 rounded-full shrink-0"
                   style={{ backgroundColor: cat.color || DEFAULT_CATEGORY_COLOR }}
                 />
-                <span className="flex-1 text-sm font-medium text-gray-800 truncate">
+                <span className="flex-1 text-sm font-medium text-gray-800 dark:text-gray-200 truncate">
                   {cat.name}
                 </span>
                 <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                   <button
                     onClick={() => { setEditing(cat); setFormOpen(true); }}
-                    className="p-1.5 rounded-lg text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 transition-colors"
+                    className="p-1.5 rounded-lg text-gray-400 dark:text-gray-500 hover:text-indigo-600 hover:bg-indigo-50 transition-colors"
                     aria-label={`Edit ${cat.name}`}
                   >
                     <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -101,7 +101,7 @@ export function CategoriesManager({ initialCategories }: CategoriesManagerProps)
                   </button>
                   <button
                     onClick={() => handleDelete(cat)}
-                    className="p-1.5 rounded-lg text-gray-400 hover:text-rose-600 hover:bg-rose-50 transition-colors"
+                    className="p-1.5 rounded-lg text-gray-400 dark:text-gray-500 hover:text-rose-600 hover:bg-rose-50 transition-colors"
                     aria-label={`Delete ${cat.name}`}
                   >
                     <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>

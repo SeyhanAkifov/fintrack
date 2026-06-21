@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { UserMenu } from "./UserMenu";
+import { ThemeToggle } from "./ThemeToggle";
 
 const LINKS = [
   { href: "/dashboard", label: "Dashboard" },
@@ -22,12 +23,12 @@ export function NavBar() {
     cn(
       "text-sm font-medium px-3 py-1.5 rounded-lg transition-all",
       pathname === href
-        ? "text-indigo-600 bg-indigo-50"
-        : "text-gray-500 hover:text-indigo-600 hover:bg-indigo-50"
+        ? "text-indigo-600 bg-indigo-50 dark:text-indigo-300 dark:bg-indigo-500/10"
+        : "text-gray-500 hover:text-indigo-600 hover:bg-indigo-50 dark:text-gray-400 dark:hover:text-indigo-300 dark:hover:bg-gray-800"
     );
 
   return (
-    <nav className="sticky top-0 z-40 border-b border-white/60 bg-white/70 backdrop-blur-xl">
+    <nav className="sticky top-0 z-40 border-b border-white/60 bg-white/70 backdrop-blur-xl dark:border-gray-800 dark:bg-gray-900/70">
       <div className="max-w-5xl mx-auto px-4 flex items-center justify-between h-14">
         <Link
           href="/dashboard"
@@ -52,31 +53,35 @@ export function NavBar() {
               {l.label}
             </Link>
           ))}
-          <div className="ml-2 pl-2 border-l border-gray-200">
+          <div className="ml-2 pl-2 border-l border-gray-200 dark:border-gray-700 flex items-center gap-1">
+            <ThemeToggle />
             <UserMenu />
           </div>
         </div>
 
-        {/* Mobile hamburger */}
-        <button
-          onClick={() => setOpen((o) => !o)}
-          className="md:hidden p-2 -mr-2 rounded-lg text-gray-500 hover:text-indigo-600 hover:bg-indigo-50 transition-colors"
-          aria-label="Toggle menu"
-          aria-expanded={open}
-        >
-          <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            {open ? (
-              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-            ) : (
-              <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
-            )}
-          </svg>
-        </button>
+        {/* Mobile actions */}
+        <div className="md:hidden flex items-center gap-1">
+          <ThemeToggle />
+          <button
+            onClick={() => setOpen((o) => !o)}
+            className="p-2 -mr-2 rounded-lg text-gray-500 hover:text-indigo-600 hover:bg-indigo-50 dark:text-gray-400 dark:hover:text-indigo-300 dark:hover:bg-gray-800 transition-colors"
+            aria-label="Toggle menu"
+            aria-expanded={open}
+          >
+            <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              {open ? (
+                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+              ) : (
+                <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+              )}
+            </svg>
+          </button>
+        </div>
       </div>
 
       {/* Mobile menu panel */}
       {open && (
-        <div className="md:hidden border-t border-white/60 bg-white/90 backdrop-blur-xl px-4 py-3 flex flex-col gap-1">
+        <div className="md:hidden border-t border-white/60 bg-white/90 backdrop-blur-xl px-4 py-3 flex flex-col gap-1 dark:border-gray-800 dark:bg-gray-900/95">
           {LINKS.map((l) => (
             <Link
               key={l.href}
@@ -87,7 +92,7 @@ export function NavBar() {
               {l.label}
             </Link>
           ))}
-          <div className="mt-2 pt-2 border-t border-gray-200">
+          <div className="mt-2 pt-2 border-t border-gray-200 dark:border-gray-700">
             <UserMenu />
           </div>
         </div>

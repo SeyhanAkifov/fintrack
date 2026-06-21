@@ -32,7 +32,7 @@ interface ExpensePieChartProps {
 export function ExpensePieChart({ data, colorMap }: ExpensePieChartProps) {
   if (data.length === 0) {
     return (
-      <div className="flex items-center justify-center h-64 text-sm text-gray-400">
+      <div className="flex items-center justify-center h-64 text-sm text-gray-400 dark:text-gray-500">
         No expense data yet.
       </div>
     );

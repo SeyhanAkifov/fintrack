@@ -16,8 +16,8 @@ export function InsightsCard({ insights }: InsightsCardProps) {
 
   if (comparisons.length === 0) {
     return (
-      <div className="rounded-2xl bg-white/70 backdrop-blur border border-white shadow-sm p-6">
-        <p className="text-sm text-gray-400 text-center py-4">
+      <div className="rounded-2xl bg-white/70 dark:bg-gray-800/60 backdrop-blur border border-white dark:border-gray-700 shadow-sm p-6">
+        <p className="text-sm text-gray-400 dark:text-gray-500 text-center py-4">
           No data to compare yet — add transactions for at least two months.
         </p>
       </div>
@@ -25,12 +25,12 @@ export function InsightsCard({ insights }: InsightsCardProps) {
   }
 
   return (
-    <div className="rounded-2xl bg-white/70 backdrop-blur border border-white shadow-sm overflow-hidden">
+    <div className="rounded-2xl bg-white/70 dark:bg-gray-800/60 backdrop-blur border border-white dark:border-gray-700 shadow-sm overflow-hidden">
       {/* Header */}
-      <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+      <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 dark:border-gray-700">
         <div>
-          <h3 className="font-semibold text-gray-900">Spending Insights</h3>
-          <p className="text-xs text-gray-400 mt-0.5">{thisMonthLabel} vs {lastMonthLabel}</p>
+          <h3 className="font-semibold text-gray-900 dark:text-gray-100">Spending Insights</h3>
+          <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">{thisMonthLabel} vs {lastMonthLabel}</p>
         </div>
         <div className="flex items-center gap-2">
           {overpaid.length > 0 && (
@@ -48,7 +48,7 @@ export function InsightsCard({ insights }: InsightsCardProps) {
       </div>
 
       {/* Rows */}
-      <div className="divide-y divide-gray-50">
+      <div className="divide-y divide-gray-50 dark:divide-gray-700/50">
         {[...overpaid, ...increased, ...unchanged, ...decreased].map((c) => {
           const isUp = c.delta > 0;
           const isDown = c.delta < 0;
@@ -61,7 +61,7 @@ export function InsightsCard({ insights }: InsightsCardProps) {
                 <span className={`w-2.5 h-2.5 rounded-full shrink-0 ${
                   isOver ? "bg-rose-500" : isUp ? "bg-amber-400" : isDown ? "bg-emerald-500" : "bg-gray-300"
                 }`} />
-                <span className="text-sm font-medium text-gray-800">{c.category}</span>
+                <span className="text-sm font-medium text-gray-800 dark:text-gray-200">{c.category}</span>
                 {isOver && (
                   <span className="text-xs font-semibold text-rose-600 bg-rose-50 border border-rose-200 px-2 py-0.5 rounded-full">
                     Overpaid
@@ -70,17 +70,17 @@ export function InsightsCard({ insights }: InsightsCardProps) {
               </div>
 
               {/* Arrow line */}
-              <div className="hidden sm:flex items-center gap-2 text-xs text-gray-400">
+              <div className="hidden sm:flex items-center gap-2 text-xs text-gray-400 dark:text-gray-500">
                 <span>{formatCurrency(c.lastMonth)}</span>
                 <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
                 </svg>
-                <span className="text-gray-600 font-medium">{formatCurrency(c.thisMonth)}</span>
+                <span className="text-gray-600 dark:text-gray-300 font-medium">{formatCurrency(c.thisMonth)}</span>
               </div>
 
               {/* Delta */}
               <div className={`flex items-center gap-1 text-sm font-bold tabular-nums min-w-[90px] justify-end ${
-                isDown ? "text-emerald-600" : isUp ? "text-rose-500" : "text-gray-400"
+                isDown ? "text-emerald-600" : isUp ? "text-rose-500" : "text-gray-400 dark:text-gray-500"
               }`}>
                 {isDown ? (
                   <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
